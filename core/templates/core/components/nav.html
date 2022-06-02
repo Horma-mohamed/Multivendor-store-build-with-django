@@ -1,0 +1,333 @@
+{% load static %}
+
+<nav class="w-screen h-20 bg-gray-50  justify-center  md:flex  mt-0 border border-y-gray-200 mb-0 transform relative z-20 " >
+<div class="lg:w-10/12 w-[95%] h-full bg-gray-00 rounded- flex  justify-between items-center ">
+   <a  class="" href="{% url 'frontpage' %}">
+    <div class="w-  mx-4 bg-gray-  rounded-md ">
+      <h1 class="text-4xl font-bold text-sky-600 font-sand" >MARKET</h1>
+
+    </div>
+   </a>
+   <div class="lg:w-7/12 w-9/12 hidden lg:block  bg-gray-00 h-14 ">
+    {% include 'product/search-form.html' %}
+   </div>
+   
+<div class=" h-14 bg-gray-00  space-x-10 items-center flex  ">
+  <div class="group relative w-10 h-10 border border-gray-200 rounded-lg hidden md:flex justify-center items-center">
+    <i class="ri-archive-line text-2xl"></i>
+    {% if user.orders.all.count > 0 %}
+    <div class="w-2 h-2 rounded-full bg-sky-600 absolute group-hover:opacity-0 -bottom-1 animate- "></div>
+
+    <div class=" absolute -bottom-6 w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100  bg-gray-50 border rounded-md text-center  text-sky-600 f">
+      <span class=" " >
+        {{ user.orders.all.count }}
+      </span>
+      
+    </div>
+    {% endif %}
+  </div>
+  
+  
+  <div id='favorites-btn' class=" group relative w-10 h-10 cursor-pointer  border border-gray-200 rounded-lg hidden md:flex justify-center items-center">
+   <i class="ri-heart-line text-2xl  "></i>
+    {% if user.favorites.all.count > 0  %}
+    <div class="w-2 h-2 rounded-full bg-red-600 absolute group-hover:opacity-0 -bottom-1 animate- "></div>
+      <div class=" absolute -bottom-6 w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100  bg-gray-50 border rounded-md text-center  text-red-600 f">
+        <span class=" " >
+          {{ user.favorites.all.count }}
+        </span>
+        
+      </div>
+    
+   {% endif %}
+  
+  </div>
+  
+    <div class=" group  w-10 h-10 border border-gray-200 rounded-lg hidden md:flex justify-center items-center relative">
+      
+        {% if cart  %}
+       <div class="w-2 h-2 rounded-full bg-green-400 absolute group-hover:opacity-0 -bottom-1 left-4  "></div>
+       <div class=" absolute -bottom-6 w-5 h-5 flex items-center justify-center opacity-100 hidden group-hover:block  bg-gray-50 border rounded-md text-center  text-green-600 f">
+        <span class=" " >
+           {{ cart.values | length }}
+        </span>
+        
+      </div>
+      {% endif %}
+      <div class=' group-hover:block hidden absolute top-8  w-96 p-4 '>
+        <ul class='p-2  bg-gray-100 mt-4 rounded-lg ' >
+          {% if cart  %}
+          {% for item in cart.values %}
+        <li class=" space-y-4 border-b last:border-b-0 border-gray-200  ">
+            
+                <div class=" w-full flex my-4">
+                    <div class="w-14 bg-gray-100 rounded-lg flex justify-center">
+                        <img src="{{ item.product.thumb }}" alt="" srcset="">
+                    </div>
+                    <div class="w-4/5 ml-4 relative flex ">
+                        <div>
+                            <h1 class="text-sm font-bold w-4/5">
+                                <a href=" {% url 'product' item.product.category.slug item.product.subcategory.slug item.product.slug %} " >{{item.product.title | truncatechars:30}}</a>
+                            </h1>
+                            <div class="flex space-x-4 my-4">
+                                <h1 class="text-sm font-normal w-4/5">
+                                    {{item.product.color }}
+                                </h1>
+                                <h1 class="text-sm font-normal w-4/5">
+                                    {{item.product.size }}
+                                </h1>
+                            </div>
+                            <h1 class="text-md">
+                                ${{item.total_price}}
+                            </h1>
+                        </div>
+                        <div class="absolute top-0 right-4">
+                            <td><a href="?remove_from_cart={{ item.id }}" class=" active:text-red-600">Remove</a></td>
+                        </div>
+                        <div class="flex absolute right-5 top-7 space-x-4 " >
+                            
+                            <a href="?change_quantity={{ item.id }}&quantity=-1">-</a>
+                           <span> {{item.quantity}}</span>
+                           <a href="?change_quantity={{ item.id }}&quantity=1">+</a>
+                        </div>
+                    </div>
+                </div>
+              </li>
+           
+        {% endfor %}
+        {% else %}
+              <div class='w-full p-4  flex justify-center items-center '>
+                <img src="{% static 'img/cart_empty.png' %}"/>
+              </div>
+              <div class='w-full p-4  flex justify-center items-center '>
+                <h1> You have no product on your cart </h1>
+              </div>
+        {% endif %}
+            </ul>
+            
+    
+       </div>
+       <a href={% url 'cart' %}><i class="ri-shopping-cart-line text-2xl"></i></a>
+      <div class=' group-hover: hidden absolute top-14 w-96 h-64 bg-gray-200 '>
+   
+  </div>
+  </div>
+  
+    <div class='flex space-x-3 items-center' >
+      <div class=" user-btn cursor-pointer group relative w-10 h-10 border border-gray-200 rounded-lg flex justify-center items-center  ">
+        <i class="ri-user-6-fill text-2xl"></i>
+        <div class=" user-menu  w-40   py-2 bg-gray-50   rounded-none absolute border  -right-20  flex-col hidden opacity-100 top-[58px]">
+          <a href="">
+            <li class="link w-full border-b text sm text-gray-600 list-none pl-2">My account</li>
+          </a>
+          {% if user.vendor %}
+          <a href={% url 'vendor_home' %}     >
+            <li class="link w-full border-b text sm text-gray-600 list-none pl-2">Vendor Dashboard</li>
+          </a>
+          {% endif %}
+          <a href="">
+            <li class="link w-full border-b text sm text-gray-600 list-none pl-2">Plans</li>
+          </a><a href="">
+            <li class="link w-full border-b text sm text-gray-600 list-none pl-2">Messages</li>
+          </a>
+          <a href="{% url 'logout' %}">
+            <li class="link w-full border-0 text sm text-gray-600 list-none pl-2">Log out</li>
+          </a>
+        </div>
+      </div>
+      <div class=" ">
+        {% if user.is_authenticated %}
+        <span class=" font-semibold text-gray-500 " >{{ user }}</span>
+        {% else %}
+           <span class="text-md font-bold text-gray-600 " ><a href="{% url 'login' %}"> Log in</a></span>
+        {% endif %}
+      </div>
+  </div>
+</div>
+  
+</div>
+
+</nav>
+
+<div class=' md:hidden w-screen h-20 bg-gray-50 fixed bottom-0  flex justify-center items-center z-[9999]  md:'  >
+  <div  id='mobile-menu' class="w-screen h-screen fixed  transform duration-500 bg-white  -translate-y-[47%] -translate-x-[100%] ">
+    <div class="mt-20" >
+      <div class=" full  bg-gray-00 h-14 flex justify-center py-4 ">
+        {% include 'product/search-form.html' %}
+       </div>
+      <ul  class=" mt-14">
+        <li class="w-full h-14 border-t pl-4 transform duration-300 hover:pl-0 last:border-b  text-2xl text-gray-600">List  </li>
+        <li class="w-full h-14 border-t pl-4 transform duration-300 hover:pl-0 last:border-b  text-2xl text-gray-600">List </li>
+        <li class="w-full h-14 border-t pl-4 transform duration-300 hover:pl-0 last:border-b  text-2xl text-gray-600">List </li>
+        <li class="w-full h-14 border-t pl-4 transform duration-300 hover:pl-0 last:border-b  text-2xl text-gray-600">List </li>
+        <li class="w-full h-14 border-t pl-4 transform duration-300 hover:pl-0 last:border-b  text-2xl text-gray-600">List </li>
+        <li class="w-full h-14 border-t pl-4 transform duration-300 hover:pl-0 last:border-b  text-2xl text-gray-600">List </li>
+      </ul>
+    </div>
+  </div>
+  <div class=' w-10/  flex' >
+    <div class=" h-14 bg-gray-00 flex space-x-10 items-center   ">
+      <div class="group relative w-10 h-10 border border-gray-200 rounded-lg flex justify-center items-center">
+        <i class="ri-archive-line text-2xl"></i>
+        {% if user.orders.all.count > 0 %}
+        <div class="w-2 h-2 rounded-full bg-sky-600 absolute group-hover:opacity-0 -bottom-1 animate- "></div>
+    
+        <div class=" absolute -top-6 w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100  bg-gray-50 border rounded-md text-center  text-sky-600 f">
+          <span class=" " >
+            {{ user.orders.all.count }}
+          </span>
+          
+        </div>
+        {% endif %}
+      </div>
+      
+      
+      <div id='favorites-btn-mobile' class=" group relative w-10 h-10 cursor-pointer  border border-gray-200 rounded-lg flex justify-center items-center">
+       <i class="ri-heart-line text-2xl  "></i>
+        {% if user.favorites.all.count > 0  %}
+        <div class="w-2 h-2 rounded-full bg-red-600 absolute group-hover:opacity-0 -bottom-1 animate- "></div>
+          <div class=" absolute -top-6 w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100  bg-gray-50 border rounded-md text-center  text-red-600 f">
+            <span class=" " >
+              {{ user.favorites.all.count }}
+            </span>
+            
+          </div>
+        
+       {% endif %}
+      
+      </div>
+      
+      <a href="{% url 'frontpage' %}">
+        <div class="group hover:w-[65px] hover:h-[65px] hover:-translate-y-1.5  transform duration-300  user-btn cursor-pointer group relative bg-sky-600 w-[60px] h-[60px] border border-gray-200 rounded-full flex justify-center items-center  ">
+          <i class="ri-home-line text-2xl text-gray-50 shadow-2xl group-hover:text-3xl transform duration-300"></i>
+          
+        </div>
+      </a>
+      
+        
+      <div class=" group  w-10 h-10 border border-gray-200 rounded-lg flex justify-center items-center relative">
+      
+        {% if cart  %}
+       <div class="w-2 h-2 rounded-full bg-green-400 absolute group-hover:opacity-0 -bottom-1 left-4  "></div>
+       <div class=" absolute -top-6 w-5 h-5 flex items-center justify-center opacity-100 hidden group-hover:block  bg-gray-50 border rounded-md text-center  text-green-600 f">
+        <span class=" " >
+           {{ cart.values | length }}
+        </span>
+        
+        </div>
+        {% endif %}
+      <div class=' group-hover:block hidden absolute bottom-14 -right-32  w-[90vw] p-4 '>
+        <ul class='p-2  bg-gray-100 mt-4 rounded-lg ' >
+          {% if cart  %}
+          {% for item in cart.values %}
+        <li class=" space-y-4 border-b last:border-b-0 border-gray-200  ">
+            
+                <div class=" w-full flex my-4">
+                    <div class="w-14 bg-gray-100 rounded-lg flex justify-center">
+                        <img src="{{ item.product.thumb }}" alt="" srcset="">
+                    </div>
+                    <div class="w-4/5 ml-4 relative flex ">
+                        <div>
+                            <h1 class="text-sm font-bold w-4/5">
+                                <a href=" {% url 'product' item.product.category.slug item.product.subcategory.slug item.product.slug %} " >{{item.product.title | truncatechars:30}}</a>
+                            </h1>
+                            <div class="flex space-x-4 my-4">
+                                <h1 class="text-sm font-normal w-4/5">
+                                    {{item.product.color }}
+                                </h1>
+                                <h1 class="text-sm font-normal w-4/5">
+                                    {{item.product.size }}
+                                </h1>
+                            </div>
+                            <h1 class="text-md">
+                                ${{item.total_price}}
+                            </h1>
+                        </div>
+                        <div class="absolute top-0 right-4">
+                            <td><a href="?remove_from_cart={{ item.id }}" class=" active:text-red-600">Remove</a></td>
+                        </div>
+                        <div class="flex absolute right-5 top-7 space-x-4 " >
+                            
+                            <a href="?change_quantity={{ item.id }}&quantity=-1">-</a>
+                           <span> {{item.quantity}}</span>
+                           <a href="?change_quantity={{ item.id }}&quantity=1">+</a>
+                        </div>
+                    </div>
+                </div>
+              </li>
+           
+        {% endfor %}
+        {% else %}
+              <div class='w-full p-4  flex justify-center items-center '>
+                <img src="{% static 'img/cart_empty.png' %}"/>
+              </div>
+              <div class='w-full p-4  flex justify-center items-center '>
+                <h1> You have no product on your cart </h1>
+              </div>
+        {% endif %}
+            </ul>
+            
+    
+       </div>
+       <a href={% url 'cart' %}><i class="ri-shopping-cart-line text-2xl"></i></a>
+      <div class=' group-hover: hidden absolute top-14 w-96 h-64 bg-gray-200 '>
+   
+  </div>
+  </div>
+  <div class='flex space-x-3 items-center' >
+    <!-- 
+     -->
+     <div id="mobile-menu-btn" class=' md:hidden w-10 h-10 border bg-gray-50 rounded-lg  z-[99999] top-20 left-4 flex justify-center items-center '>
+      <i class="ri-menu-line text-2xl text-gray-800"></i>
+    </div>
+    </div>
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+<!-- <div class="mx-10 ">
+  {% include 'product/search-form.html' %}
+ </div>
+ <div class=" flex space-x-3 " >
+   {% for category in menu_categories %}
+    <a href="{% url 'category' category.slug %}" class=" text-xl ">{{category.name}}</a>
+   {% endfor %}
+ </div>
+
+ <div class="w-40 h-14 flex space-x-4 items-center">
+   {% if user.is_authenticated %}
+   <div class="dropdown">
+    <div class="dropdown-trigger p-0 bg-transparent">
+      <button class="button bg-transparent" aria-haspopup="true" aria-controls="dropdown-menu3">
+        <span class=" font-semibold text-gray-800" >{{user}}</span>
+        <span class="icon is-small">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 13.172l4.95-4.95 1.414 1.414L12 16 5.636 9.636 7.05 8.222z"/></svg>
+        </span>
+      </button>
+    </div>
+    <div class="dropdown-menu" id="dropdown-menu3" role="menu">
+      <div class="dropdown-content">
+       <a class="dropdown-item" href="{% url 'logout' %}">Log out</a>
+      </div>
+    </div>
+  </div>
+
+   
+   {% else %}
+   <span class="text-lg font-bold text-gray-500" ><a href="{% url 'login' %}">Log in</a></span>
+   {% endif %}
+    <a href="{% url 'cart' %}">
+      <div class="flex space-x-1" >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M4 16V4H2V2h3a1 1 0 0 1 1 1v12h12.438l2-8H8V5h13.72a1 1 0 0 1 .97 1.243l-2.5 10a1 1 0 0 1-.97.757H5a1 1 0 0 1-1-1zm2 7a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm12 0a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/></svg>
+        <span>{{ cart.values | length }}</span>
+      </div>
+    </a>
+  </div> -->

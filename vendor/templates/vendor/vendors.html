@@ -1,0 +1,28 @@
+{% extends 'core/base.html' %}
+
+{% block title %} Vendors {% endblock title %}
+
+{% block content %}
+
+<div class='flex flex-col space-y-4 '>
+ 
+    {% for vendor in vendors %}
+    <div class="card">
+        <header class="card-header">
+          <p class="card-header-title">
+           <a href={% url "vendor" vendor.id %}>
+            {{vendor.name}}
+           </a>
+          </p>
+          <button class="card-header-icon" aria-label="more options">
+            <span class="icon">
+              <i class="fas fa-angle-down" aria-hidden="true"></i>
+            </span>
+          </button>
+        </header>
+      </div>
+    {% endfor %}
+
+</div>
+
+{% endblock content %}

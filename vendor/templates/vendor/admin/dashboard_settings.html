@@ -1,0 +1,75 @@
+{% extends 'core/admin/dashboard.html' %}
+
+{% block title %}Vendor settings  | {{vendor}}  {% endblock %}
+
+{% block content %}
+   
+<div class="w-full min-h-screen">
+    <h1 class="text-2xl py-10 ">
+        Edit vendor
+    </h1>
+    <p class="my-5">
+        {{erorr}}
+    </p>
+    <form method="post" action="" class=" space-y-5 "  enctype='multipart/form-data'>
+        {% csrf_token %}
+       <!-- {{ form.as_p }} -->
+       <div class="w-full flex justify-center ">
+        <div class="w-40 h-40 rounded-xl bg-gray-200 relative over">
+            <label for="profile" class=" w-6  before:cursor-pointer before:z-20 before:absolute before:border before:border-sky-600 before:-right-4 before:-top-3 before:w-14 before:h-14 before:bg-gray-100 before:opacity-100 before:rounded-full rounded-full h-6">
+                <i class="ri-pencil-fill z-30 ri-2x absolute cursor-pointer -right-1 -top-1.5"></i>
+                <div style="background-size: cover; background-image: url('{{ vendor.profile.url }}');" class=" profile_preview z-10 absolute w-40  h-40 bg-gray-00 rounded-xl flex justify-center items-center left- w-full text-center" >
+                    <div class=" add -space-x-4 hidden">
+                        <i class="ri-add-line ri-3x "></i>
+                    <h1 class="font-bold text-xl" >Add photo</h1>
+                    </div>
+                </div>
+                
+            </label>
+            <input id='profile' type="file" class=" hidden  " value="{% if vendor.profile %}{{ vendor.profile}}{% endif %}" name="profile_img">
+        </div>
+
+    </div>
+<div class="w-full flex justify-center">
+    <div>
+        <div class=" flex space-x-4">
+            <div>
+                <label for="" class="text-lg text-gray-600 font-bold" >Vendor name</label><br>
+                <input class="input is-info w-60" type="text"  name="name" placeholder="name" value={{vendor.name}} >
+            </div>
+            <div>
+                <label for="" class="text-lg text-gray-600 font-bold" >Vendor email</label><br>
+                <input class="input is-info w-96" type="email"  name="email" placeholder="email" value={{vendor.created_by.email}} >
+    
+            </div>
+     
+           </div>
+            <button class="p-2 bg-sky-600 text-gray-50 font-semibold mt-4  " > Edit Vendor </button>
+    </div>
+</div>
+    </form>
+</div>
+        
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.2/moment.min.js" integrity="sha512-Wkxbeuy81yHqZNrMurMURCOCMzkJqaFYnvToublHiOGoVXQ2DS1lOUjKwstbe0GwELrRb9sicdV2y6GiAnVxuw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script type='module' >
+function readUrl(input){
+    if(input.files && input.files[0]){
+        var reader = new FileReader()
+        reader.onload = function(e){
+            $('.profile_preview').children('.add').hide()
+            $('.profile_preview').css('background-image',`url(${e.target.result})`)
+            $('.profile_preview').hide()
+            $('.profile_preview').fadeIn(650)
+        }
+        reader.readAsDataURL(input.files[0])
+    }
+    
+}
+$('#profile').change(function(){
+        readUrl(this)
+    })
+</script>
+{% endblock scripts %}

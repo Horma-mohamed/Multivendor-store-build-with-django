@@ -1,0 +1,132 @@
+{% extends 'core/base.html' %}
+{% block title %}
+Creat Product
+{% endblock title %}
+
+{% block content %}
+<div class="full flex justify-center">
+  <form method="post"  class=" space-y-5 w-2/3 " action="" enctype='multipart/form-data' >
+    {% csrf_token %}
+    <!-- {{ form.as_p }} -->
+        
+        <div class="field">
+            <label class="label">Title</label>
+            <div class="control">
+              <input class="input" type="text" name="title" maxlength="255" required="" id="id_title">
+            </div>
+            <p class="help">This is a help text</p>
+          </div>
+        
+        
+      
+    
+      
+      <div class="flex space-x-4">
+        <div class="field">
+          <label class="label">Thumbnail</label>
+          <div class="file has-name">
+              <label class="file-label">
+                <input class="file-input" type="file" name="thumb" required="" id="id_thumb">
+                <span class="file-cta">
+                  <span class="file-icon">
+                    <i class="fas fa-upload"></i>
+                  </span>
+                  <span class="file-label">
+                    Choose a file…
+                  </span>
+                </span>
+                <span class="file-name">
+                  
+                </span>
+              </label>
+            </div>
+          
+          
+        </div >
+
+        <p>
+          <div class="field">
+              <label class="label">Price</label>
+              <div class="control">
+                <input class="input" type="text" type="number" name="price" value="0" min="0" required="" id="id_price">
+              </div>
+              <p class="help">This is a help text</p>
+            </div>
+          
+      
+        </p>
+        <div class="field">
+          <label class="label">Quantity</label>
+          <div class="control">
+            <input class="input w-14 " type="text" type="number" name="quantity" value="1" min="0" required="" id="id_quantity">
+          </div>
+          <p class="help">This is a help text</p>
+        </div>
+      
+      
+        
+        <p>
+  
+          <div class="field">
+              <label for="" class="label">Category</label>
+              <div class="select is-info">
+                  <select name="category" >
+                    <option value="" selected="">Select dropdown</option>
+                    {% for category in menu_categories %}
+                    <option value="{{ category.id }}" >{{  category.name }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+          </div>
+        </p> 
+      </div>
+     <div class="field w-full">
+      <label for="" class="label font-light">Extra images</label>
+      <div class="file has-name is-boxed w-full ">
+        
+        <label class="file-label w-full">
+          <input class="file-input" type="file" name="images" multiple>
+          <span class="file-cta w-full">
+            <span class="file-icon">
+              <i class="fas fa-upload"></i>
+            </span>
+            <span class="file-label">
+              Choose a file…
+            </span>
+          </span>
+          
+        </label>
+      </div>
+     </div>
+      <div class=" field ">
+        <label class="label">Desc</label>
+        <textarea class="textarea" placeholder="Desc" cols="40" id="id_desc" name="desc" rows="10" required="" data-processed="0" data-config="{&quot;skin&quot;: &quot;moono-lisa&quot;, &quot;toolbar_Basic&quot;: [[&quot;Source&quot;, &quot;-&quot;, &quot;Bold&quot;, &quot;Italic&quot;]], &quot;toolbar_Full&quot;: [[&quot;Styles&quot;, &quot;Format&quot;, &quot;Bold&quot;, &quot;Italic&quot;, &quot;Underline&quot;, &quot;Strike&quot;, &quot;SpellChecker&quot;, &quot;Undo&quot;, &quot;Redo&quot;], [&quot;Link&quot;, &quot;Unlink&quot;, &quot;Anchor&quot;], [&quot;Image&quot;, &quot;Flash&quot;, &quot;Table&quot;, &quot;HorizontalRule&quot;], [&quot;TextColor&quot;, &quot;BGColor&quot;], [&quot;Smiley&quot;, &quot;SpecialChar&quot;], [&quot;Source&quot;]], &quot;toolbar&quot;: &quot;Full&quot;, &quot;height&quot;: 291, &quot;width&quot;: 835, &quot;filebrowserWindowWidth&quot;: 940, &quot;filebrowserWindowHeight&quot;: 725, &quot;language&quot;: &quot;en-us&quot;}" data-external-plugin-resources="[]" data-id="id_desc" data-type="ckeditortype"></textarea>
+      </div>
+
+    
+      
+      
+    
+        
+
+    <button class="p-4 bg-sky-600 text-gray-50 font-semibold m-5 " > Create Product </button>
+</form>
+</div>
+{% endblock content %}
+
+{% block scripts %}
+
+<script>
+  
+  const fileInput = document.querySelector('#file-js-example input[type=file]');
+  fileInput.onchange = () => {
+    if (fileInput.files.length > 0) {
+      const fileName = document.querySelector('#file-js-example .file-name');
+      fileName.textContent = fileInput.files[0].name;
+    }
+
+  }
+
+  CKEDITOR.replace( 'desc' );
+</script>
+{% endblock  %}

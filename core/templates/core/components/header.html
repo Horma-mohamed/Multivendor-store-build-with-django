@@ -1,0 +1,89 @@
+
+{%  load static %}
+{% load notifications_tags %}
+<nav class="  fixed flex  right-10 h-20 bg-gray-5 px-  space-x-8   items-center ">
+    <div class="group lg:w-10 lg:h-10 w-8 h-8 rounded-lg bg-gray-50  relative  ">
+        {% if today_notifications.unread %}
+        <div class="w-3 h-3 bg-red-400 absolute top-3 right-2 rounded-full  text-white"> <span class="absolute font-bold left-0.5 top- " style="font-size: 10px;" >{{ today_notifications.unread.count }}</span></div>
+        {%endif%}
+        <div class=" w-full h-full flex justify-center items-center cursor-pointer ">
+            <i class="ri-notification-fill text-gray-400 ri-xl"></i>
+        </div>
+        <div class="invisible {% if today_notifications %} group-hover:visible {%endif%} pt-4 relative z-30 ">           <div class="w-4 h-4 border-l border-t transform rotate-45 bg-gray-50 relative top-2 left-1/2 right-1/2 z-30 "></div>
+            <div style="width: 300px;" class="p-4 bg-gray-50 relative  -ml-24 mr-20  h-auto rounded-lg  max-h-80 overflow-y-auto   border  ">
+     
+                {% if today_notifications %}
+                   <label class="label underline " for="">Today's notifications</label>
+                   <div class="p-2">
+                    {% if today_notifications %}
+                    <label for="" class="label">Unreaded</label>
+                    {% for notif in  today_notifications  %}
+                        <div class="notification space-y-3 {%if notif.level == 'success' %} bg-green-50 {% elif notif.level == 'info' %} bg-sky-50 {%endif%} ">
+                            <span class="font-light  ">
+                                {{  notif.level }}
+                            </span>
+                            <p class="text-sm" >
+                                {{ notif.verb }}
+                            </p>
+                        </div>
+                    {% endfor %}
+                    {% endif %}
+                    {% if user.notifications.read %}
+                    <label for="" class="label">Readed</label>
+                    {% for notif in  user.notifications.read  %}
+                        <div class="notification max-h-20 ">
+                            <span class="font-light underline">
+                                {{  notif.level }}
+                            </span>
+                            <span class="text-sm" >
+                                {{ notif.verb }}
+                            </span>
+                        </div>
+                    {% endfor %}
+                    {% endif %}
+                   </div>
+                {%endif%}
+            </div>
+        </div>
+    </div>
+    <div  class="rounded-lg bg-gray-100 flex z-30 cursor-pointer relative lg:min-w-10 lg:h-10 min-w-8 h-8 ">
+        <div class=" search-input w-0 transform duration-500 h-10">
+            <input id="search" type="search" class=" w-full bg-transparent h-full pl-2 outline-none  " placeholder=" Search {% if queryset.name %} in {{ queryset.name }}{% endif %}" >
+            <li id="result" class=" list-none absolute top-14 rounded-lg  min-w-44 bg-gray-50 border  " >
+
+            </li>
+        </div>
+        <button class="search-btn w-10 transform duration-500 h-10 flex justify-center items-center  ">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M11 2c4.968 0 9 4.032 9 9s-4.032 9-9 9-9-4.032-9-9 4.032-9 9-9zm0 16c3.867 0 7-3.133 7-7 0-3.868-3.133-7-7-7-3.868 0-7 3.132-7 7 0 3.867 3.132 7 7 7zm8.485.071l2.829 2.828-1.415 1.415-2.828-2.829 1.414-1.414z" fill="rgba(52,72,94,1)"/></svg>    </div>
+        </button>
+<div class="flex space-x-2 items-center justify-self-end">
+    <div class=" relative user-btn cursor-pointer lg:w-10 lg:h-10 w-8 h-8 rounded-lg bg-gray-200 overflow-visiible flex justify-center items-center  ">
+        <div class="w-full h-full rounded-lg overflow-hidden">
+            <img class="w-full" src={{ user.vendor.profile.url }} alt="" srcset="">
+        </div>
+        <div class=" menu-user w-40 hidden py-2 bg-gray-100 rounded-lg absolute top-14 right-0">
+            <div class="w-full flex justify-center ">
+                <div class="p-2 text-center">
+                    <div class="w-14 h-14 rounded-lg overflow-hidden mx-20">
+                        <img class="w-full" src={{ user.vendor.profile.url }} alt="" srcset="">
+                    </div>
+
+                    <h1 class=" font-semibold my-1 " >{{user.vendor.name}}</h1>
+                    <h1 class="text-sm font-semibold text-gray-600 " >{{user.email}}</h1>
+                </div>
+            </div>
+            <ul class=" mt-2" >
+                <a href="{% url 'logout' %}">
+                    <li class="border-t border-gray-300 text-center space-x-2 ">
+                        <i class="ri-logout-box-r-line mt-1"></i>  <span>Log out</span>
+                    </li>
+                </a>
+            </ul>
+        </div>
+    </div>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 13.172l4.95-4.95 1.414 1.414L12 16 5.636 9.636 7.05 8.222z" fill="rgba(52,72,94,1)"/></svg>
+</div>
+</nav>
+
+
+

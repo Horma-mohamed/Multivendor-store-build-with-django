@@ -1,0 +1,21 @@
+
+{% extends 'core/base.html' %}
+
+{% block title %}  searching.. for {{query}} {% endblock title %}
+
+{% block content %}
+    <div class="w-full  bg-gray-00 my-10 flex space-x-10 p-4 justify-center">
+            
+            
+            <div class="w-[80%] flex justiif-center ">
+                <div class="w-full min-h-40  grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4  mt-10 ">
+                        
+                            {% for  product in products %}
+                                {% include 'product/products_list.html' %}
+                            {% endfor %}
+                        
+                </div>
+            </div>
+
+    </div>
+{% endblock content %}

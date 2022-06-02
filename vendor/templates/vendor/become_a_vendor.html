@@ -1,0 +1,76 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Login{% endblock title %}
+
+{% block content %}
+<div class="w-full min-h-screen mt-32">
+    
+    <div class="w-full flex justify-center ">
+        <div class=" relative w-80 rounded-md p-2 py-4 bg-gray-50 shadow-md">
+            <div class="w-full flex justify-center absolute  -top-10">
+                <div>                    
+                    <a href="{% url 'login' %}"><span class="text-xl text-gray-600">Login</span></a>
+                    /
+                    <span class="text-xl text-sky-700 underline underline-offset-1	">Sign up</span>
+
+                </div>
+            </div>
+            <form method="post" action="" class=" space-y-5 " >
+                {% csrf_token %}
+                   
+        
+                    <div class="field">
+                        <p class="control has-icons-left has-icons-right">
+                          <input class="input" placeholder="Username"  type="text" name="username" maxlength="150" autocapitalize="none" autocomplete="username" autofocus="" required="" id="id_username">
+                          <span class="icon is-small is-left">
+                            <i class="fas fa-envelope"></i>
+                          </span>
+                          <span class="icon is-small is-right">
+                            <i class="ri-user-fill"></i>
+                          </span>
+                        </p>
+                        <span class="help">Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.</span>
+                      </div>
+                      <div class="field">
+                        <p class="control has-icons-left has-icons-right">
+                          <input class="input" type="email" placeholder="Email" name="email" autofocus="" autocapitalize="none" autocomplete="email" maxlength="150" required="" id="id_email">
+                          <span class="icon is-small is-left">
+                            <i class="fas fa-envelope"></i>
+                          </span>
+                          <span class="icon is-small is-right">
+                            <i class="ri-email-fill"></i>
+                          </span>
+                        </p>
+                      </div>
+                      <div class="field">
+                        <p class="control has-icons-left">
+                          <input class="input" placeholder="Password" type="password" name="password1" autocomplete="new-password" required="" id="id_password1">
+                          <span class="icon is-small is-left">
+                            <i class="fas fa-lock"></i>
+                          </span>
+                        </p>
+                      </div>
+                      <div class="field">
+                        <p class="control has-icons-left">
+                          <input class="input" placeholder="Confirm password" type="password" name="password2" autocomplete="new-password" required="" id="id_password2">
+                          <span class="icon is-small is-left">
+                            <i class="fas fa-lock"></i>
+                          </span>
+                        </p>
+                      </div>
+                   
+            
+                    <div class=" w-full flex justify-between  items-center ">
+                        <button class="button is-info ">Sign up</button>
+                        
+    
+                    </div>
+    
+                </form>
+        </div>
+    </div>
+    
+</div>
+{% endblock content %}
+
+

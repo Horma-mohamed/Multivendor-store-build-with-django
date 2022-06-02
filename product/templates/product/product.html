@@ -1,0 +1,342 @@
+{% extends 'core/base.html' %}
+
+{% block title %} {{product.title}} {% endblock title %}
+{% block styles %} 
+<style>
+    *{
+    margin: 0;
+    padding: 0;
+}
+.rate {
+    float: left;
+    height: 46px;
+    padding: 0 10px;
+}
+.rate:not(:checked) > input {
+    position:absolute;
+    top:0;
+    display :none;
+  
+    
+}
+.rate:not(:checked) > label {
+    float:right;
+    width:1em;
+    overflow:hidden;
+    white-space:nowrap;
+    cursor:pointer;
+    font-size:30px;
+    color:#ccc;
+}
+.rate:not(:checked) > label:before {
+    content: '★ ';
+}
+.rate > input:checked ~ label {
+    color: #ffc700;    
+}
+.rate:not(:checked) > label:hover,
+.rate:not(:checked) > label:hover ~ label {
+    color: #deb217;  
+}
+.rate > input:checked + label:hover,
+.rate > input:checked + label:hover ~ label,
+.rate > input:checked ~ label:hover,
+.rate > input:checked ~ label:hover ~ label,
+.rate > label:hover ~ input:checked ~ label {
+    color: #c59b08;
+}
+
+/* Modified from: https://github.com/mukulkant/Star-rating-using-pure-css */
+    @keyframes show-toast{
+    0%{
+        bottom: -100%;
+    }
+    20%{
+        bottom: 50px;
+    }
+    80%{
+        bottom: 50px;
+    }
+    100%{
+        bottom: -100%;
+    }
+
+}
+
+.is-toast{
+    position: fixed;
+    bottom: 100%;
+    right: 200px;
+    animation-name: show-toast ;
+    animation-duration: 4s;
+}
+</style>
+{% endblock styles %}
+
+{% block content %}
+<div class="modal modal-review">
+    <form action="" method="get">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+          <header class="modal-card-head">
+            <p class="modal-card-title" >Modal title</p>
+            <span class="delete close-btn" aria-label="close"></span>
+          </header>
+          <section class="modal-card-body space-y-3">
+            <div class="control">
+                <div class="rate">
+                    <input type="radio" id="star5" name="rate" {% if rev.rate == 5 %} checked {% endif %} value="5" />
+                    <label for="star5" title="text" >5 stars</label>
+                    <input type="radio" id="star4" name="rate" {% if rev.rate == 4 %} checked {% endif %} value="4" />
+                    <label for="star4" title="text">4 stars</label>
+                    <input type="radio" id="star3" name="rate" {% if rev.rate == 3 %} checked {% endif %} value="3" />
+                    <label for="star3" title="text">3 stars</label>
+                    <input type="radio" id="star2" name="rate" {% if rev.rate == 2 %} checked {% endif %} value="2" />
+                    <label for="star2" title="text">2 stars</label>
+                    <input type="radio" id="star1" name="rate" {% if rev.rate == 1 %} checked {% endif %} value="1" />
+                    <label for="star1" title="text">1 star</label>
+                  </div>
+              </div>
+            <textarea name="desc" class="textarea" placeholder=" Write your exprience with this product ">{% if rev %} {{rev.text}} {% endif %}</textarea>
+          </section>
+          <footer class="modal-card-foot">
+            <button class="button is-success">Save changes</button>
+            <span class="button is-danger close-btn">Cancel</span>
+          </footer>
+        </div>
+    </form>
+      </div>
+    <div class="w-full min-h-screen  bg-gray-50 pt-10 px-2">
+        <div class=" relative md:flex space-x- w-full">
+            
+            <div class="md:w-64 w-full  h-60 rounded-md bg-gray-00 rounded-md flex justify-center">
+                <img class=" w- h-full " src={{ product.thumb.url }} alt="" >
+            </div>
+            <div class="w-32 md:  bg-gray-30 my-4 md:absolute  -left-32 grid md:grid-cols-1 grid-cols-5 grid-flow-row space-y-4">
+                {% for image in product.images.all %}
+                <div class="w-24 h-24 bg-gray-300 rounded-md overflow-hidden">
+                    <img class="w-full  " src="{{ image.image.url}}" alt="" srcset="">
+                </div>
+                {% endfor %}
+                
+        </div>
+            <div class=" body md:w-2/5 w-full min-h-screen bg-gray-00 rounded mx-2">
+
+                <div>
+                    <h1 class="text-3xl text-normal my-2">
+                        {{ Products }}
+                    </h1>
+                    <h1 class="text-3xl text-normal my-2">
+                        {{product.title}}
+                    </h1>
+                    
+                    <span class="text-light text-gray-500 mt-4 "> Category : <a href={% url 'category' product.category.slug  %} class="text-blue-600">{{ product.category.name }} <br></a> Sub category : <a href={% url 'category' product.category.slug  %} class="text-blue-600">{{ product.Subcategory.name }}</a> </span>
+                    
+                </div>
+                
+                <div class='mt-2'>
+                    <span class="text-2xl text-red-600 ">
+                        ${{product.price}}
+                    </span>
+                </div>
+                 <hr class="bg-gray-800 ">
+            <form action="" method="post">
+                 {% if product.sizes.all %}
+                 <div class="my-5">
+                    <label for="" class="label" >Sizes:</label>
+                    <div class="w-full flex p-2 my-5 ">
+                       <ul class="radio flex space-x-4" >
+                        {% for size in product.sizes.all %}
+                        <li class="radio container">
+                          <label for="size-{{size.id}}">
+                              <div class="px-4 p-2 border border-sky-600">{{ size.name }}</div>
+                         </label>
+                         <input type="radio" name="size" id="size-{{size.id}}" value="{{ size.name }}" class="hidden" >
+                     </li>
+                        {% endfor %}
+                       </ul>
+                       </div>
+                 </div>
+                 {% endif %}
+                 {% if product.colors.all %}
+                <div class=" my-5">
+                    <label for="" class="label" >Colors:</label>
+                    <div class="w-full flex  p-2">
+                        <ul class="radio flex space-x-4" >
+                       {% for color in product.colors.all %}
+                       <li class="radio container  rounded-full p-1" >
+                        <label for="{{color.id}}" class=" w-8 h-8 cursor-pointer">
+                            <div class=" w-8 h-8 rounded-full " style="background-color:{{ color.code }} " ></div>
+                          </label>
+                          <input type="radio" name="color" class="hidden" value="{{ color.name }}"  id="{{color.id}}">
+                        </li>
+                       {% endfor %}
+                        </ul>
+                       </div>
+                </div>
+                 {% endif %}
+                <div class=" mt-10 ">
+                    <h1 class=" label p-2 pl-0 text-lg "> Description: </h1>
+                        <p class="text-md text-gray-700">
+                            {{ product.desc | safe }}
+                        </p>
+                </div>
+                <hr>
+
+                <div class="mt-10">
+                    
+                        {% csrf_token %}
+                       <div class="field has-addons">
+
+                           <div class="control">
+                               <input type="number" name="quantity" min="1" id="" value="1" class="input">
+                           </div>
+                           <div class="control">
+                                <button class=" button is-success is-upercase " > Add to cart  </button>
+                           </div>
+                       </div>
+                
+                    </form>
+
+                </div>
+
+               <div class="w-full h-80 bg-gray-00 mt-4">
+              
+                    <div class=" mt-4 w-full">
+                        <div class=" flex justify-between items-center">
+                            <h1 class="label text-2xl my-3">Reviews</h1>
+                        {% if user.is_authenticated  %}
+                            {% if rev is None  %}
+                            <button id="write_review"  class="underline text-xl  cursor-pointer  ">Write a review  </h1>
+                            {%endif%}
+                        {%endif%}
+                        </div>
+                        <div class=" ">
+                           {% for review in reviews %}
+                           <div class="w-80  bg-gray-100 rounded-lg mt-4 p-4">
+
+                            <div class="flex justify-between">
+                                <div class=" flex space-x-4">
+                                    <div class="w-14 h-14 rounded-full bg-gray-300"></div>
+                                    <h1 class="text-xl font-semibold">{{ review.user.username }}</h1>
+                                </div>
+                                <div class="flex text-3xl ">
+                                    {% if review.rate == 5  %}
+                                    <div class="w-full flex space-x-1">
+                                    <i class="ri-star-s-fill text-lg text-yellow-600 "></i>
+                                    <i class="ri-star-s-fill text-lg text-yellow-600 "></i>
+                                    <i class="ri-star-s-fill text-lg text-yellow-600 "></i>
+                                    <i class="ri-star-s-fill text-lg text-yellow-600 "></i>
+                                    <i class="ri-star-s-fill text-lg text-yellow-600 "></i>
+                                    </div>
+                                    {% elif review.rate == 4 %}
+                                    <div class="w-full flex space-x-1">
+                                        <i class="ri-star-s-fill text-lg text-yellow-600 "></i>
+                                        <i class="ri-star-s-fill text-lg text-yellow-600 "></i>
+                                        <i class="ri-star-s-fill text-lg text-yellow-600 "></i>
+                                        <i class="ri-star-s-fill text-lg text-yellow-600 "></i>
+                                        <i class="ri-star-s-fill text-lg text-gray-300 "></i>
+                                        </div>
+                                        {% elif review.rate == 3 %}
+                                        <div class="w-full flex space-x-1">
+                                            <i class="ri-star-s-fill text-lg text-yellow-600 "></i>
+                                            <i class="ri-star-s-fill text-lg text-yellow-600 "></i>
+                                            <i class="ri-star-s-fill text-lg text-yellow-600 "></i>
+                                            <i class="ri-star-s-fill text-lg text-gray-300 "></i>
+                                            <i class="ri-star-s-fill text-lg text-gray-300 "></i>
+                                            </div>
+                                            {% elif review.rate == 2 %}
+                                        <div class="w-full flex space-x-1">
+                                        <i class="ri-star-s-fill text-lg text-yellow-600 "></i>
+                                        <i class="ri-star-s-fill text-lg text-yellow-600 "></i>
+                                        <i class="ri-star-s-fill text-lg text-gray-300"></i>
+                                        <i class="ri-star-s-fill text-lg text-gray-300"></i>
+                                        <i class="ri-star-s-fill text-lg text-gray-300 "></i>
+                                        </div>
+                                        {% elif review.rate == 1 %}
+                                    <div class="w-full flex space-x-1">
+                                        <i class="ri-star-s-fill text-lg text-yellow-600 "></i>
+                                        <i class="ri-star-s-fill text-lg text-gray-300"></i>
+                                        <i class="ri-star-s-fill text-lg text-gray-300"></i>
+                                        <i class="ri-star-s-fill text-lg text-gray-300"></i>
+                                        <i class="ri-star-s-fill text-lg text-gray-300 "></i>
+                                        </div>
+                                    {% endif %}
+                                    
+                                </div>
+                            </div>
+                            <p class="px-4 pt-4 text-light text-sm text-gray-400 ">{{ review.text }}</p>
+                            {% if user == review.user %}
+                            <button id="write_review"  class="underline float-right"> Edit your review  </button>
+                            {%endif%}
+                        </div>
+
+                           {% endfor %}
+                        </div>
+                    </div>
+               </div> 
+            </div>
+            <div class=" lg:absolute right-0 my-10 w-48  bg-gray-00 rounded-md   "> 
+                <h1 class=" text-2xl  w-full label   text-gray-700">
+                    Semillar products 
+                </h1>
+                <div class=" w-full flex flex-col grid-cols-2 space-y-3">
+                    {% for product in semillar_products %}
+                    <div class="  w-full flex justify-center">
+                        <div class="w-4/5 h-36 bg-gray-100 mx-0 rounded-md relative px-2 relative  items-center">
+                            <a class="absolute top-1" href="{% url 'product' product.category.slug product.Subcategory.slug product.slug %}" ><h1 class="text-md font-semibold my-">{{ product.title | truncatechars:10 }}</h1></a>
+                            <svg class='absolute right-2 top-1  ' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0H24V24H0z"/><path d="M12.001 4.529c2.349-2.109 5.979-2.039 8.242.228 2.262 2.268 2.34 5.88.236 8.236l-8.48 8.492-8.478-8.492c-2.104-2.356-2.025-5.974.236-8.236 2.265-2.264 5.888-2.34 8.244-.228zm6.826 1.641c-1.5-1.502-3.92-1.563-5.49-.153l-1.335 1.198-1.336-1.197c-1.575-1.412-3.99-1.35-5.494.154-1.49 1.49-1.565 3.875-.192 5.451L12 18.654l7.02-7.03c1.374-1.577 1.299-3.959-.193-5.454z"/></svg>
+                            <a class='absolute right-2 bottom-1 z-10' href='?product_id={{product.id}}'>
+                                <svg class='w-5' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M11 11V7h2v4h4v2h-4v4h-2v-4H7v-2h4zm1 11C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16z" fill="rgba(23,134,207,1)"/></svg>
+                            </a>
+                            <div class='w-full flex justify-center mt-10 '>
+                                <img class=' w-14  ' src={{ product.thumb.url}} alt="not found">
+                            </div>
+                             <div class="w-full p-2 absolute bottom-0 ">
+                                <div class='w-full flex justify-between mt-2 items-center '>
+                                <p class=" text-gray-800 text-sm font-bold">${{product.price}}</p>
+                                
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
+
+
+{% block scripts %}
+
+    <script type="module" >
+        jQuery(function($){
+  // notify CSS that JS is present
+  
+  // for every radio control...
+  $( 'ul.radio' )
+    // redo every change
+    .bind('click', function () {
+      // refresh "current classes"
+      $( 'li', this ).removeClass( 'border-2 border-blue-500' )
+        .filter( ':has(:checked)' ).addClass( 'border-2 rounded-full border-gray-900 overflow-hidden' );
+    })
+    // trigger initial run
+    .trigger( 'click' );  
+});
+
+$('#write_review').click(()=>{
+    $('.modal-review').addClass('is-active')
+})
+$('.close-btn').click(()=>{
+    $('.modal-review').removeClass('is-active')
+})
+
+ 
+    </script>
+    
+
+{% endblock scripts %}

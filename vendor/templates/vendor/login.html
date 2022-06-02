@@ -1,0 +1,54 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Login{% endblock title %}
+
+{% block content %}
+<div class="w-full min-h-screen mt-32">
+    
+    <div class="w-full flex justify-center ">
+        <div class=" relative w-80 rounded-md p-2 py-4 bg-gray-50 shadow-md">
+            <div class="w-full flex justify-center absolute  -top-10">
+                <div>
+                    <span class="text-xl text-sky-700 underline underline-offset-1	">Login</span>
+                    /
+                    <a href="{% url 'become_a_vendor' %}"><span class="text-xl text-gray-600">Sign up</span></a>
+
+                </div>
+            </div>
+            <form method="post" action="" class=" space-y-5 " >
+                {% csrf_token %}
+                <div class="field">
+                    <p class="control has-icons-left has-icons-right">
+                      <input class="input" type="text" placeholder="Username" name="username" autofocus="" autocapitalize="none" autocomplete="username" maxlength="150" required="" id="id_username">
+                      <span class="icon is-small is-left">
+                        <i class="fas fa-envelope"></i>
+                      </span>
+                      <span class="icon is-small is-right">
+                        <i class="fas fa-check"></i>
+                      </span>
+                    </p>
+                  </div>
+                  <div class="field">
+                    <p class="control has-icons-left">
+                      <input class="input" type="password" placeholder="Password"  name="password" autocomplete="current-password" required="" id="id_password">
+                      <span class="icon is-small is-left">
+                        <i class="fas fa-lock"></i>
+                      </span>
+                    </p>
+                  </div>
+               
+        
+                <div class=" w-full flex justify-between  items-center " >
+                    <button class="button is-info ">Log in</button>
+                    <a class="text-xs text-red-600" href="">Forgot your password?</a>
+
+                </div>
+
+            </form>
+        </div>
+    </div>
+    
+</div>
+{% endblock content %}
+
+

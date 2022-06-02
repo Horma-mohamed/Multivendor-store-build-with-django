@@ -1,0 +1,186 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+    <title>
+        {% block title %}
+        {% endblock title %}
+    </title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&family=Red+Hat+Mono:wght@300&family=Ubuntu:wght@300;400&display=swap');
+    </style>
+    <link rel="stylesheet" href="{% static 'styles/main.css' %}">
+    {% block styles %}
+        
+    {% endblock styles %}
+    <style>
+        input[type="search"]::-webkit-search-cancel-button {
+        -webkit-appearance: none;
+        height: 1em;
+        width: 1em;
+        border-radius: 50em;
+        background: url("https://img.icons8.com/external-dreamstale-lineal-dreamstale/344/external-delete-interface-dreamstale-lineal-dreamstale.png") no-repeat 50% 50%;
+        background-size: contain;
+        opacity: 0;
+        pointer-events: none;
+    }
+    
+    @keyframes show-toast{
+    0%{
+        bottom: -100%;
+    }
+    20%{
+        bottom: 50px;
+    }
+    80%{
+        bottom: 50px;
+    }
+    100%{
+        bottom: -100%;
+    }
+
+}
+
+.is-toast{
+    position: fixed;
+    bottom: 100%;
+    right: 200px;
+    animation-name: show-toast ;
+    animation-duration: 4s;
+}
+      </style>
+</head>
+
+<body class=" bg-slate-50 w-screen  py-4 flex justify-center  lg:px-4 ">
+    <div id="darkbackground" class="w-[200vw] h-[100vh] fixed hidden z-[999] top-0 left-0 bg-gray-800 bg-opacity-80" ></div>
+    <div id="admin-sidebar-btn" class="w-14 h-14 bg-sky-600 rounded-r-lg  lg:hidden fixed top-14 left-0 transform duration-300  z-[999999] "></div>
+    {% if messages  %}
+        
+        {% for message in messages %}
+            <div class="{% if message.tags == 'error'  %} is-danger{% elif message.tags == 'warning'  %} is-warning{% elif message.tags == 'info'  %} is-info {% elif message.tags == 'success'  %} is-success {%endif%} is-toast  notification   absolute z-10  ">
+                {{message}}
+            </div>
+        {% endfor %}
+
+        {% endif %}
+    <div  class="relative w-[100%]lg:w-[96%] flex lg:space-x-20">
+        <div id="admin-sidebar" class=" w-60 fixed top-0 left-0 translate-x-[-100%] lg:translate-x-0 lg:static z-[9999] lg:block  transform duration-300 overflow-y-hidden h-[100vh] ">
+            <div style='height:96vh;' class='w-56 bg-sky-700 fixed rounded-l-full ' >
+                {% include 'core/components/admin_sidebar.html' %}
+            </div>
+        </div>
+        <div class='lg:w-3/4 w-full ' >
+            {% include 'core/components/header.html' %}
+            {% block content %}
+
+    {% endblock content %}
+        </div>
+    </div>
+
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <script src="https://unpkg.com/swiper@8/swiper-bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+
+    <script type="module" >
+        $(document).ready(function () {
+            
+            
+                
+                //e.preventDefault();
+                
+                $('.dashboard_list').addClass('bg-gray-50')
+                $('.dashboard_list').children('span').addClass('text-gray-800 ')
+                $('.dashboard_list').children('.icon').addClass('ml-4  mr-5 text-gray-800 ')
+                $('.dashboard_list').children('b.b1').addClass('-top-5 w-full h-5 bg-gray-50 before:absolute before:w-full before:h-full before:bg-sky-600 before:rounded-r-3xl before:rounded-t-none  ')
+                $('.dashboard_list').children('b.b2').addClass('-bottom-5 left-0 ri w-full h-5 bg-gray-50 before:absolute before:w-full before:h-full before:bg-sky-600 before:rounded-r-3xl before:rounded-b-none  ')
+
+            $('.user-btn').click(()=>{
+                $('.menu-user').fadeToggle()
+            })
+            $('.search-btn').click(()=>{
+                $('.search-input').toggleClass('w-40')
+            })
+                
+           $('#search-box').on('input',()=>{
+               
+           })
+           $('#admin-sidebar-btn').click(()=>{
+               $('#admin-sidebar-btn').toggleClass('translate-x-56')
+               $('#admin-sidebar').toggleClass('translate-x-[-100%]')
+               $('#darkbackground').toggleClass('hidden')
+               
+           })
+        });
+
+        
+        
+    </script>
+    <script>
+        
+    </script>
+    {% block scripts %}
+    
+    {% endblock scripts %}
+</script>
+  
+<script>
+  var list = {{ queryset.list | safe  }}
+  const searchInput = document.getElementById('search')
+  const resultBox = document.getElementById('result')
+  searchInput.addEventListener('change',(e)=>{
+    resultBox.innerHTML = ''
+      var filteredList = list.filter((product)=>{
+          if(searchInput.value !=''){
+            if(product.title.toLowerCase().includes(searchInput.value.toLowerCase())){
+            return product
+          }
+          }
+      })
+      
+      filteredList.map((p)=>{
+        var elm = document.createElement('li')
+        elm.setAttribute('class','w-60 min-h-20 border-b last:border-0 p-4 ')
+        elm.innerHTML = `
+         <div class=" flex space-x-2 " > 
+          <img class="w-14 h-full" src=" ${p.thumb} "/>
+          <div class=''>
+          <a  href="http://${location.host}/${p.category_slug}/${p.subcategory_slug}/${p.slug} " target="_blank"> <h1 class="text-[12px]  font-bold" >${p.title}</h1>   </a>
+          <i>$${p.price}</i>
+          </div>
+            </div>
+             `
+        resultBox.append(elm)
+      })
+      
+      
+  })
+</script>
+    
+<script>
+        
+
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            clifford: '#da373d',
+          },
+          fontFamily:{
+            sand:['Quicksand', 'sans-serif']
+          }
+        }
+      }
+    }
+
+    </script>
+    
+</body>
+
+</html>

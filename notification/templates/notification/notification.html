@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+<body>
+    <div class="w-screen h-screen bg-gray-50 flex justify-center items-center">
+        <div class="w-1/2  h-80 rounded-lg bg-sky-50 p-4 ">
+            <form  class="" id="form">
+                <label for="message" class="label">Message</label>
+                <textarea class="textarea bg-gray-50" name="" id="message" cols="30" rows="10"></textarea>
+            <input type="submit" value="Send" class=" p-2 bg-sky-600 my-2 text-white"/>
+            </form>
+            <div id="messages" class="w-full p-4 rounded-lg bg-yellow-100 mt-10">
+                
+            </div>
+
+        </div>
+    </div>
+</body>
+<script type='module' >
+    let url = `ws://${ window.location.host }/ws/socket-server/`
+    let NotifS = new WebSocket(url)
+    let messages = document.getElementById('messages')
+    NotifS.onmessage = (e)=>{
+            let data = JSON.parse(e.data)
+            if(data.type =='notif'){
+                let message = data['message']
+                let li = document.createElement('li')
+                li.setAttribute('class','notification')
+                li.innerHTML = message
+                messages.insertAdjacentElement('beforeend',li)
+            }
+            console.log("Data:",data)
+    }
+    let form = document.getElementById('form')
+    form.addEventListener('submit',(e)=>{
+            e.preventDefault();
+            let message = e.target.message.value
+            NotifS.send(JSON.stringify({
+                'message':message,
+            }))
+            form.reset()
+    })
+</script>
+</html>

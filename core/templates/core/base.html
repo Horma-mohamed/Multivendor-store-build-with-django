@@ -1,0 +1,267 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <link rel="stylesheet" href="{% static 'styles/product.css' %}">
+    <title>
+        {% block title %}
+        {% endblock title %}
+    </title>
+    <script src="https://cdn.ckeditor.com/4.18.0/standard/ckeditor.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'styles/main.css' %}">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&family=Red+Hat+Mono:wght@300&family=Ubuntu:wght@300;400&display=swap');
+    </style>
+    <style>
+      #category-item:hover > #sub_categories_cont{
+          visibility:visible,
+      }
+      @media only screen and (max-width: 600px){
+      @keyframes show-toast{
+      0%{
+          bottom: -100%;
+      }
+      20%{
+         
+	    /*Big smartphones [426px -> 600px]*/
+          bottom: 100px;
+          
+      }
+      80%{
+          bottom: 100px;
+      }
+      100%{
+          bottom: -100%;
+      }
+  
+  }}
+  @media only screen and (min-width: 1200px){
+    @keyframes show-toast{
+      0%{
+          bottom: -100%;
+      }
+      20%{
+         
+	    /*Big smartphones [426px -> 600px]*/
+          bottom: 50px;
+          
+      }
+      80%{
+          bottom: 50px;
+      }
+      100%{
+          bottom: -100%;
+      }
+  
+  }
+  }
+  
+  .is-toast{
+      position: fixed;
+      bottom: 100%;
+      right: 200px;
+      animation-name: show-toast ;
+      animation-duration: 4s;
+  }
+  
+  .swiper:hover .swiper-button-prev{
+      opacity: 100%;
+      transition-duration: .5s;
+      transform: translateX(0px);
+  }
+  .swiper-button-prev{
+      opacity: 0;
+   position: absolute;
+   z-index: 10;
+   transform: translateX(-30px);
+  }
+  
+  .swiper:hover .swiper-button-next{
+      opacity: 100%;
+      transition-duration: .5s;
+      transform: translateX(0px);
+  }
+  .swiper-button-next{
+      opacity: 0;
+   position: absolute;
+   z-index: 10;
+   transform: translateX(30px);
+   
+  }
+  .swiper-pagination-bullet-active{
+      width: 32px;
+      height: 10px;
+      border-radius: 10px;
+      transition-duration: .5s;
+  }
+  .swiper-pagination-bullet{
+      transition-duration: .5s;
+  }
+  
+  
+  .user-menu{
+      z-index: 1000;
+  }
+  
+  </style>
+    {% block styles %}
+    
+    {% endblock styles %}
+</head>
+
+<body class=" w-screen h-screen overflow-x-hidden">
+    <div id='favorites-modal' class=" modal h-auto ">
+        <div class="modal-background "></div>
+        <div class="modal-card w-[90vw] md:w-[40vw] absolute md:bottom-1/2  bottom-24   rounded-lg">
+          <header class="modal-card-head  bg-white rounded-x-lg border-0 ">
+            <p class="modal-card-title font-semibold font-sand text-gray-700 ">My Favorites</p>
+            <button id='favorites-closebtn' class="delete" aria-label="close"></button>
+          </header>
+          <section class="modal-card-body   h- w- ">
+            <!-- Content ... -->
+            {% if user.favorites.all %}
+            <ul>
+              {% for favorite in user.favorites.all  %}
+            <li class='w-full relative border-b last:border-0 min-h-14 bg-gray-0 my-1 flex'>
+              <a href='/?favorites_remove_id={{favorite.id}}' class='font-light hover:text-red-700 text-gray-500 absolute right-0'> Remove</a>
+              <img class='w-20' src='{{ favorite.thumb.url }}' >
+              <div class='p-2 w-2/3'>
+                <a href='{% url "product" favorite.category.slug favorite.Subcategory.slug favorite.slug  %}'> <h1 class='text-[16px] ' >{{ favorite.title }}</h1> </a>
+                <i class='text-gray-600 '>
+                  ${{ favorite.price }}
+                </i>
+              </div>
+            </li>
+            {% endfor %}
+            </ul>
+            {% else %}
+            <div class='text-center'>
+                <div class="flex justify-center mt-20">
+                    <img class='w-64 ' src="{% static 'img/nofavorite.png' %}">
+                </div>
+              <h1 class='text-2xl font-meduiem' >You have no favorites :(</h1>
+            </div>
+            {% endif %}
+          </section>
+          {% comment %} <footer class="modal-card-foot bg-white rounded-y-lg">
+            <button class="button is-success">Save changes</button>
+            <button class="button">Cancel</button>
+          </footer> {% endcomment %}
+        </div>
+      </div>
+    <div class="w-full h-14 bg-sky-800 ">
+
+    </div>
+    <div class=" w-full h-0 mrounded-b-full "></div>
+    {% include 'core/components/nav.html'%}
+    <div class='w-full flex justify-center ' >
+        
+        
+           <div class="lg:w-4/ w-full" > 
+            {% block content  %}
+            {% endblock content  %}
+          </div>
+        </div>
+    
+    {% include 'core/components/footer.html'%}
+    
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <script src="https://unpkg.com/swiper@8/swiper-bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+    {% block scripts %}
+    
+    {% endblock scripts %}
+    
+    <script type="module" >
+        document.querySelector('#favorites-btn').addEventListener('click',()=>{
+                document.querySelector('#favorites-modal').classList.add('is-active')
+            })
+            document.querySelector('#favorites-closebtn').addEventListener('click',()=>{
+                document.querySelector('#favorites-modal').classList.remove('is-active')
+            })
+
+         $(document).ready(function () {
+            $(document).scroll(()=>{
+                var scroll = $(document).scrollTop()
+                if(scroll>=58){
+                    $('nav').removeClass(' relative')
+                    $('nav').addClass(' fixed top-0 -translate-y-1 bg-gray-50 z-10 duration-300 ')
+                }
+                else{
+                    $('nav').removeClass(' fixed top-0 -translate-y-1  z-10 duration-300')
+                    $('nav').addClass(' relative ')
+                }
+               
+
+            })
+            $.fn.hasAttr = function(name) {  
+                return this.attr(name) !== undefined;
+                };
+             var current = $('.swiper-pagination-bullet')
+             if (current.hasAttr('')) {
+                console.log(current)
+            }
+             
+        });
+        $(document).ready(function () {
+            var userSlideDirection = false
+            $('.user-btn').click(()=>{
+                userSlideDirection=!userSlideDirection
+                if(userSlideDirection){
+                    $('.user-menu').slideDown('slow')
+                }
+                else{
+                    $('.user-menu').slideUp('slow')
+                }
+            })
+            $('#categories-btn').click(()=>{
+                $('#categories-menu').children('#categories-side-bar').children('#categories-item').children('#sub_categories_cont').addClass(' left-72 bg-sky-500')
+                $('#categories-menu').slideToggle()
+
+            })
+            $('#favorites-btn').click(()=>{
+                $('#favorites-modal').addClass('is-active')
+            })
+            $('#favorites-btn-mobile').click(()=>{
+                $('#favorites-modal').addClass('is-active')
+            })
+            $('#favorites-closebtn').click(()=>{
+                $('#favorites-modal').removeClass('is-active')
+            })
+            
+            $('#mobile-menu-btn').click(()=>{
+              $('#mobile-menu').toggleClass(' translate-x-0')
+            })
+        });
+
+
+    </script>
+    <script>
+        
+
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            clifford: '#da373d',
+          },
+          fontFamily:{
+            sand:['Quicksand', 'sans-serif']
+          }
+        }
+      }
+    }
+
+    </script>
+    
+</body>
+
+</html>

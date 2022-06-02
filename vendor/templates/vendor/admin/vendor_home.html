@@ -1,0 +1,217 @@
+{% extends 'core/admin/dashboard.html' %}
+
+{% block title %}Vendor dashboard | {{ user }} {% endblock %}
+
+{% block content %}
+    <div class=" w-full relative">
+        <div class=' w-full h-24 p-2 text-gray-700  ' >
+            <h1 style='font-family: "Quicksand", sans-serif !important;' class='lg:text-4xl text-2xl font-bold'>Dashboard</h1>
+        </div>
+        
+        
+     <div class=" grid gap-2 md:grid-rows-1 md:grid-flow-col grid-cols-2 grid-flow-row md:space-x-10 space-y-4 mb-20">
+      <div class="md:w-48  h-24 rounded-xl bg-green-50  border-sky-600 flex justify-center items-center  ">
+        <div class="flex space-x-4  items-center">
+         <div class="w-8 h-8 bg- flex justify-center items-center">
+           <i class=" ri-wallet-2-line  ri-3x text-green-400 "></i>
+         </div>
+        <div class="text-gray-600 font-bold " ><h1> Balance:</h1> <h1 class="font-normal" > ${{ vendor.get_balance }}</h1> </div>
+      </div>
+      </div>
+     <div class="md:w-48  h-24 rounded-xl bg-yellow-50  border-sky-600 flex justify-center items-center  ">
+         <div class="flex space-x-4  items-center">
+          <div class="w-8 h-8 bg- flex justify-center items-center">
+            <i class="  ri-money-dollar-box-line ri-3x text-yellow-500  "></i>
+          </div>
+        <div class="text-gray-600 font-bold " ><h1> Earnings</h1> <h1 class="font-normal" > ${{ vendor.get_paid_amount }}</h1> </div>
+         
+      </div>
+      </div>
+      <div class="md:w-48  h-24 rounded-xl bg-yellow-50  border-sky-600 flex justify-center items-center  ">
+        <div class="flex space-x-4  items-center">
+         <div class="w-8 h-8 bg- flex justify-center items-center">
+           <i class="  ri-money-dollar-box-line ri-3x text-yellow-500  "></i>
+         </div>  
+       <div class="text-gray-600 font-bold " ><h1> Earnings_count</h1> <h1 class="font-normal" > </h1> </div>
+        
+     </div>
+     </div>
+      <div class="md:w-48  h-24 rounded-xl bg-gray-100  border-sky-600 flex justify-center items-center  ">
+        <div class="flex space-x-4  items-center">
+         <div class="w-8 h-8 bg- flex justify-center items-center">
+          <i class="ri-archive-line ri-3x"></i>        
+         </div>
+       <div class="text-gray-600 font-bold " ><h1> Products</h1> <h1 class="font-normal" > {{ products.count }}</h1> </div>
+        
+     </div>
+     </div>
+         
+     </div>
+       
+       <div class="mt-10 w-full lg:flex  	">
+        <div class="lg:w-3/5 w-full bg-gray-50 relative ">
+            <h1 style='font-family: "Quicksand", sans-serif !important;' class='text-xl font-bold relative  bottom-10'>Orders</h1>
+            <canvas class="" width="400px" height="200px" id="myChart"></canvas>
+        </div>
+        <div class="lg:w-2/5 w-full bg-gray-00 relative lg:px-6 lg:border-l border-gray-300 lg:ml-8  {% if orders  %}  h-auto my-4 {% else  %} h-60 {% endif %}  ">
+          <h1 style='font-family: "Quicksand", sans-serif !important;' class='text-xl font-bold relative '>Recent orders</h1>
+          <div class="w-full space-y-4 mt-3   ">
+           {% if orders  %} 
+           {% for order in recent_orders  %}
+                           
+            <div  class=' order w-full grid grid-cols-5 p-3 border border-gray-200 rounded-lg relative '>
+            <!-- <div>#{{ order.id }}</div> -->
+                            <div class='col-span-3 flex items-center ' > <div class='w-10 h-10 bg-gray-200 rounded-full mr-4' ></div> <button class="js-modal-trigger" data-target="modal-js-example" id=""> {{ order.first_name }} {{ order.last_name }} </button></div>
+                            
+                            <div class='flex '><span class='ml-4'>${{ order.get_cost }}</span></div>
+                            
+                            <div class='{% if order.fully_paid %}text-green-400{% else %}text-red-600{% endif %}'>{% if order.fully_paid %}paid{% else %}Not paid{% endif %}</div>
+            </div>
+          {% endfor %}
+          
+          <div class="w-full absolute h-6 bg-gray-60 -bottom-4 left-0 flex justify-center ">
+            <div class=" flex space-x-2 font-normal items-center py-5 ">
+              <a href="{% url 'vendor_orders' %}"><h1 class=" text-md ">SEE ALL</h1></a>
+              <i class="ri-arrow-down-s-line ri-lg"></i> 
+            </div>
+            {% else %}
+            <div class="w-full text-xl text-gray-500">
+              There are not any orders !!
+            </div>
+          {% endif %}
+          </div>
+          </div>
+        </div>
+       </div>
+      
+    <div class="w-full lg:flex  bg-gray-00 pt-10">
+      <div class="lg:w-3/5 w-full bg-gray-  ">
+        <h1 style='font-family: "Quicksand", sans-serif !important;' class='text-2xl font-bold '>Earnings</h1>
+        <canvas class=" " width="400px" height="200px"  id="myChart2"></canvas>
+    </div>
+    <div class="lg:w-2/5 w-full flex justify-center mt-10 lg:mt-0 bg-gray- lg:border-l lg:pl-8 lg:ml-8 ">
+      <div>
+        <h1 style='font-family: "Quicksand", sans-serif !important;' class='text-2xl font-bold '> </h1>
+      <div class="lg:w-4/5 w-60 ">
+        <canvas class=" " width="200px" height="100px"  id="myChart3"></canvas>
+      </div>
+      </div>
+  </div>
+    </div>
+       </div>
+       
+{% endblock %}
+
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+console.log({{ queryset.list | safe}})
+  var  list = {{queryset.list | safe}}
+  
+</script>
+<script type="module">
+
+    const labels = {{ orders_labels| safe}} 
+
+    const data = {
+      labels: labels,
+      datasets: [{
+        label: 'Orders',
+        backgroundColor: '#f0f9ff',
+        borderColor: '#0284c7',
+        borderWidth:1,
+        borderRadius: 10,
+        data: {{ orders_data| safe}} ,
+        tension: 0.7
+
+      },
+      
+      
+
+  ]
+    };
+  
+    const config = {
+      type: 'bar',
+      data: data,
+      options: {}
+    };
+
+    const myChart = new Chart(
+    document.getElementById('myChart'),
+    config
+  );
+ // <block:setup:1>
+  const Earnings_data = {{ earnings_data |safe }}
+    
+  console.log(Earnings_data)
+  const labels2 = labels
+    const data2 = {
+      labels: labels,
+      datasets: [{
+        label: 'Earnings',
+        backgroundColor: '#f0f9ff',
+        borderColor: '#0284c7',
+        borderWidth:1,
+        borderRadius: 10,
+        data: Earnings_data,
+        tension: 0.4
+      },
+      
+  ]
+    };
+  
+    const config2 = {
+      type: 'line',
+      data: data2,
+      options: {}
+    };
+
+    const myChart2 = new Chart(
+    document.getElementById('myChart2'),
+    config2
+  );
+  //categorys Pie
+
+  const labels3 = [
+      'Electronics',
+      'Outdoor Fun & Sports',
+      'Home Decor',
+      'Fashion',
+      'Home Supply',
+      'Health & Beauty',
+      'Automobiles & Motorcycles'
+    ];
+    
+   
+    const data3 = {
+      labels: {{ category_list | safe}},
+      datasets: [{
+        label: 'Earnings',
+        backgroundColor: ['#94a3b8', '#059669', '#06b6d4', '#c026d3', 'Blue','#34d399','#525252'],
+        
+        borderWidth:1,
+        borderRadius: 0,
+        data: {{ category_data | safe}},
+        tension: 0.4
+      },
+      
+  ]
+    };
+  
+    const config3 = {
+      type: 'pie',
+      data: data3,
+      options: {}
+    };
+
+    const myChart3 = new Chart(
+    document.getElementById('myChart3'),
+    config3
+  );
+
+
+  
+  
+{% endblock scripts %}

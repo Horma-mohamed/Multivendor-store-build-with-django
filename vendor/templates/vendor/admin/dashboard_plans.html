@@ -1,0 +1,264 @@
+{% extends 'core/admin/dashboard.html' %}
+
+{% block content %}
+<div class=" w-full ">
+    <div class=' w-full h-24 p-2 text-gray-700  ' >
+        <h1 style='font-family: "Quicksand", sans-serif !important;' class='text-4xl font-bold '>Plans</h1>
+    </div>
+    <div class="w-full flex justify-center">
+        <div class="w-11/12 flex space-x-6">
+           
+             
+        {% for product in products %}
+        <div>
+            <div id="" class=" w-64 h-auto {% if product.name == "Professional" %}border-sky-600 {% elif product.name == "Enterprise" %} border-purple-600{% elif product.name == "Silver" %}border-zinc-500  {% else %}border-gray-200 {% endif %}  rounded-lg bg-gray-0 border  p-2 bg-gray-100 bg-opacity-40 px-4">
+              {% if  user.vendor.subscription.plan == product.plan_set.first %}
+            <div class="w-full p-2 bg-gray-100 text-center leading-9 text-xl font-semibold rounded-lg mt-0 " >
+                Current plan
+            </div>
+           {% else %}
+           <input type="checkbox" name="{{ product.name }}" value="{{ product.id }}" onclick="planSelect('{{ product.name }}', '{{product.plan_set.first.human_readable_price}}','{{product.plan_set.first.id}}')" >  
+            {% endif %}
+              <h1 class="text-xl font-semibold py-2">
+                {{product.name}}
+                </h1>
+                <div class='flex items-center'>
+                {% if product.plan_set.first.amount > 0  %}
+                <span class="text-2xl  text-gray-800 py-2 ">{{ product.plan_set.first.human_readable_price }}</span>
+                <div class='flex items-center' >
+                    {% comment %} <span class="text-xl text-gray-600 " >per</span>
+                    <span class="text-xl font- text-gray-600 p-2 ">month</span> {% endcomment %}
+                </div>
+                {% else %}
+                <span class="text-2xl font-light text-green-400 p-2 ">Free</span>
+                {% endif %}
+    
+            </div>
+            <p class='mt-4 mb-4' >
+                {{ product.description | safe }}
+            </p>
+            
+        </div>
+        </div>
+        {% endfor %}
+        </div>
+       
+       
+        
+    </div>
+    <div>
+        <div class="row my-5">
+          <div class="col-12">
+            <div class="card bg-gray-100 bg-opacity-50 p-4 mx-5  " style="">
+              <div class="card-body">
+                <h5 class="title font-bold text-gray-700 ">Checkout</h5>
+                <p class=" text-gray-500  ">Enter card details.  Your subscription will start immediately</p>
+                <div class=" flex space-x-5 items-center">
+                  <div class=" mt-2">
+                    <p class="text-lg">Plan:</p>
+                    <p class="text-lg">Total:</p>
+                  </div>
+                  <div class=" mt-2">
+                    <p  id="plan"></p>
+                    <p id="price"></p>
+                    <p hidden class="" id="priceId"></p>
+                  </div>
+    
+                </div>
+                <br>
+                <!-- action="{% url 'create_sub' %}" -->
+                <form  id="subscription-form"   >
+                 
+                  <!-- <input type="hidden" name="priceId" id="priceId_input"> -->
+                  <div id="card-element" class="MyCardElement my-4 mb-5">
+                    <!-- Elements will create input elements here -->
+                  </div>
+                  
+                  <!-- We'll put the error messages in this element -->
+                  <div id="card-errors" role="alert"></div>
+                  <button class=' py-2 px-4 bg-sky-600 text-white rounded-lg' id="submit" type="submit">
+                    <div class="spinner-border  spinner-border-sm text-light hidden" id="spinner" role="status">
+                      <span class=" text-2xl">Loading...</span>
+                    </div>
+                    <span id="button-text">Subscribe</span>
+                  </button>
+                </form>
+              </div>
+            </div>
+    
+    </div>
+</div>
+{% endblock  %}
+
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.27.1/axios.min.js" integrity="sha512-AzbhRn44jMMB3r+tBzw1apXgpDYtzqcA8KYXDR26a7PaTCjIwi/N6n0lyi8QnroHqn0DEUcQ6buOw22SBqh4VQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://js.stripe.com/v3/"></script>
+<script >
+document.getElementById("submit").disabled = true;
+
+stripeElements();
+console.log('it works')
+function stripeElements() {
+  stripe = Stripe('{{ stripe_public_key }}');
+
+  if (document.getElementById('card-element')) {
+    let elements = stripe.elements();
+
+    // Card Element styles
+    let style = {
+      base: {
+        color: "#32325d",
+        fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+        fontSmoothing: "antialiased",
+        fontSize: "16px",
+        "::placeholder": {
+          color: "#aab7c4"
+        }
+      },
+      invalid: {
+        color: "#fa755a",
+        iconColor: "#fa755a"
+      }
+    };
+
+
+    card = elements.create('card', { style: style });
+
+    card.mount('#card-element');
+
+    card.on('focus', function () {
+      let el = document.getElementById('card-errors');
+      el.classList.add('focused');
+    });
+
+    card.on('blur', function () {
+      let el = document.getElementById('card-errors');
+      el.classList.remove('focused');
+    });
+
+    card.on('change', function (event) {
+      displayError(event);
+    });
+  }
+  //we'll add payment form handling here
+  let paymentForm = document.getElementById('subscription-form');
+  if (paymentForm) {
+
+    paymentForm.addEventListener('submit', function (evt) {
+      evt.preventDefault();
+      changeLoadingState(true);
+        createPaymentMethod({ card });
+      
+        
+    });
+  }
+
+}
+
+function createPaymentMethod({ card }) {
+
+// Set up payment method for recurring usage
+let billingName = '{{user.username}}';
+
+stripe
+  .createPaymentMethod({
+    type: 'card',
+    card: card,
+    billing_details: {
+      name: billingName,
+    },
+  })
+  .then((result) => {
+    if (result.error) {
+      displayError(result);
+    } else {
+     const paymentParams = {
+        price_id: document.getElementById("priceId").innerHTML,
+        payment_method: result.paymentMethod.id,
+    };
+  
+    fetch("{% url 'create_sub' %}", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        
+      },
+      credentials: 'same-origin',
+      body: JSON.stringify(paymentParams),
+    }).then((response) => {
+      return response.json(); 
+    }).then((result) => {
+      if (result.error) {
+        // The card had an error when trying to attach it to a customer
+        console.log(result)
+        throw result;
+      }
+      return result;
+    }).then((result) => {
+      if (result && result.status === 'active') {
+
+       window.location.href = '/complete';
+      };
+    }).catch(function (error) {
+        displayError(result.error.message);
+
+    });
+    }
+  });
+}
+
+
+
+function displayError(event) {
+ 
+  let displayError = document.getElementById('card-errors');
+  if (event.error) {
+    displayError.textContent = event.error.message;
+  } else {
+    displayError.textContent = '';
+  }
+}
+
+function planSelect(name, price, priceId) {
+    var inputs = document.getElementsByTagName('input');
+
+    for(var i = 0; i<inputs.length; i++){
+      inputs[i].checked = false;
+      if(inputs[i].name== name){
+
+        inputs[i].checked = true;
+      }
+    }
+
+    var n = document.getElementById('plan');
+    var p = document.getElementById('price');
+    var pid = document.getElementById('priceId');
+    var pidI = document.getElementById('priceId_input');
+    n.innerHTML = name;
+    p.innerHTML = price;
+    pid.innerHTML = priceId;
+    pidI.value = priceId
+        document.getElementById("submit").disabled = false;
+    
+
+
+  }
+  var changeLoadingState = function(isLoading) {
+  if (isLoading) {
+    document.getElementById("submit").disabled = true;
+    document.querySelector("#spinner").classList.remove("hidden");
+    document.querySelector("#button-text").classList.add("hidden");
+  } else {
+    document.getElementById("submit").disabled = false;
+    document.querySelector("#spinner").classList.add("hidden");
+    document.querySelector("#button-text").classList.remove("hidden");
+  }
+};
+</script>
+
+
+{% endblock scripts %}
+
+
+
+

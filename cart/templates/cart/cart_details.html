@@ -1,0 +1,273 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}
+ {{user.vendor.name }} | Cart details
+{% endblock title %}
+
+{% block content %}
+
+<div style="min-height: 82vh;" class="py-8">
+    
+    <h1 class="title">Cart</h1>
+
+{% if cart %}
+    <div class=" w-full lg:flex lg:space-x-4 px-4">
+        
+        <div class="lg:w-2/5 w-full  bg-gray-50 rounded-lg px-4 ">
+            <h1 class="title text-2xl font-semibold p-2">Your Orders</h1>
+            
+            {% for item in cart.values %}
+            <div class=" space-y-4">
+                <div class="w-full flex  justify-center">
+                    <div style="height: 1px;" class="w-4/5 h-0.2 bg-gray-300 "></div>
+                </div>
+                    <div class=" w-full flex my-4">
+                        <div class="w-1/5 bg-gray-100 rounded-lg flex justify-center">
+                            <img src="{{ item.product.thumb }}" alt="" srcset="">
+                        </div>
+                        <div class="w-4/5 ml-4 relative flex ">
+                            <div>
+                                <h1 class="text-lg font-bold w-4/5">
+                                    {{item.product.title | truncatechars:30}}
+                                </h1>
+                                <div class="flex space-x-4 my-4">
+                                    <h1 class="text-sm font-normal w-4/5">
+                                        {{item.product.color }}
+                                    </h1>
+                                    <h1 class="text-sm font-normal w-4/5">
+                                        {{item.product.size }}
+                                    </h1>
+                                </div>
+                                <h1 class="text-md">
+                                    ${{item.total_price}}
+                                </h1>
+                            </div>
+                            <div class="absolute top-0 right-4">
+                                <td><a href="?remove_from_cart={{ item.id }}" class=" active:text-red-600">Remove</a></td>
+                            </div>
+                            <div class="flex absolute right-5 top-7 space-x-4 " >
+                                
+                                <a href="?change_quantity={{ item.id }}&quantity=-1">-</a>
+                               <span> {{item.quantity}}</span>
+                               <a href="?change_quantity={{ item.id }}&quantity=1">+</a>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+               
+            {% endfor %}
+            <hr>
+    
+            <div class=" w-full flex items-center  space-x-4" >
+                <h1 class="text-2xl font-bold">Total cost :</h1>
+                <h1 class="text-xl" >${{ total_cost }}</h1>
+            </div>
+        </div>
+
+    
+
+    <div class="lg:w-4/5 w-full rounded-lg my-4 bg-gray-50 p-2">
+        <h2 class=" title text-2xl font-semibold p-2 ">Contact information</h2>
+        <form method="post" action="." id="payment-form">
+            {% csrf_token %}    
+    
+            {% if form.non_field_errors %}
+                <div class="notification is-danger">
+                    {{ form.non_field_errors}}
+                </div>
+            {% endif %}
+    
+            {% if form.errors %}
+                <div class="notification is-danger">
+                    <ul>
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <li><strong>{{ field.label }}: </strong>{{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+    
+            <div class="columns">
+                <div class="column is-6">
+                    <div class="field">
+                        <label>First name</label>
+    
+                        <div class="control">
+                            <input class="input" type="text" name="first_name">
+                        </div>
+                    </div>
+    
+                    <div class="field">
+                        <label>Last name</label>
+    
+                        <div class="control">
+                            <input class="input" type="text" name="last_name">
+                        </div>
+                    </div>
+    
+                    <div class="field">
+                        <label>E-mail</label>
+    
+                        <div class="control">
+                            <input class="input" type="email" name="email">
+                        </div>
+                    </div>
+    
+                    <div class="field">
+                        <label>Phone</label>
+    
+                        <div class="control">
+                            <input class="input" type="text" name="phone">
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="column is-6">
+                    <div class="field">
+                        <label>Address</label>
+    
+                        <div class="control">
+                            <input class="input" type="text" name="address">
+                        </div>
+                    </div>
+    
+                    <div class="field">
+                        <label>Zip code</label>
+    
+                        <div class="control">
+                            <input class="input" type="text" name="zipcode">
+                        </div>
+                    </div>
+    
+                    <div class="field">
+                        <label>Place</label>
+    
+                        <div class="control">
+                            <input class="input" type="text" name="place">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+        
+    
+            <h2 class="subtitle">Payment information</h2>
+    
+            <div id="card-element">
+                <!-- A Stripe Element will be inserted here -->
+            </div>
+     {% if messages %}
+            {% for message in messages %}
+                <div class="notification is-danger">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        
+        <div class="field py-4">
+            <div class="control w-full flex justify-center">
+                <button class="button bg-sky-600 w-[60%] md:w-auto text-gray-50 mt-4 is-uppercase">Checkout</button>
+            </div>
+        </div>
+    </form>
+    </div>
+       
+   
+    </div>
+    
+
+
+
+{% else %}
+    <div class="w-full h-full flex justify-center ">
+        <div class="">
+            <img class=" w-60  " src="{% static '/img/cart_empty.png' %}" alt="">
+            <p>You don't have any products in your cart!</p>
+        </div>
+    </div>
+{% endif %}
+</div>
+
+{% endblock content %}
+
+{% block scripts %}
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        var stripe = Stripe('{{ stripe_pub_key }}');
+        var elements = stripe.elements();
+
+        var card = elements.create('card');
+
+        card.mount('#card-element');
+
+        var form = document.getElementById('payment-form');
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            stripe.createToken(card).then(function(result) {
+                if (result.error) {
+                    var errorElement = document.getElementById('card-errors');
+                    errorElement.textContent = result.error.message;
+                } else {
+                    stripeTokenHandler(result.token);
+                }
+            });
+        });
+
+        function stripeTokenHandler(token) {
+            var form = document.getElementById('payment-form');
+            var hiddenInput = document.createElement('input');
+            hiddenInput.setAttribute('type', 'hidden');
+            hiddenInput.setAttribute('name', 'stripe_token');
+            hiddenInput.setAttribute('value', token.id);
+            form.appendChild(hiddenInput);
+
+            form.submit();
+        }
+    </script>
+{% endblock %}
+
+
+{% comment %} 
+<table class="table is-fullwidth is-striped">
+    <thead>
+        <th></th>
+        <th>Product</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th></th>
+    </thead>
+
+    <tbody>
+        {% for item in cart.values %}
+            <tr>
+                <td>
+                    <figure class="image is-64x64">
+                        <img src="{{ item.product.thumb }}">
+                    </figure>
+                </td>
+                <td>
+                    <a href="{% url 'product' item.product.category.slug item.product.product_slug %}">{{ item.product.title }}</a>
+                </td>
+                <td>
+                    {{ item.quantity }}
+
+                    <a href="?change_quantity={{ item.id }}&quantity=-1">-</a>
+                    <a href="?change_quantity={{ item.id }}&quantity=1">+</a>
+                    
+                </td>
+                <td>${{ item.total_price }}</td>
+                <td><a href="?remove_from_cart={{ item.id }}" class="delete">Remove</a></td>
+            </tr>
+        {% endfor %}
+    </tbody>
+
+    <tfoot>
+        <tr>
+            <td></td>
+            <td><strong>Total cost</strong></td>
+            <td><strong>{{ cart|length}}</strong></td>
+            <td colspan="2"><strong>${{total_cost }}</strong></td>
+        </tr>
+    </tfoot>
+</table> {% endcomment %}

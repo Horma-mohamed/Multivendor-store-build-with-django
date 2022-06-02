@@ -1,0 +1,550 @@
+{% extends 'core/admin/dashboard.html' %}
+
+{% block title %}Vendor Products | {{ user }} {% endblock %}
+
+{% block styles %}
+  
+{% endblock %}
+
+{% block content %}
+    <div>
+        <div class="modal edit_product h-auto overflow-visiible ">
+            <div class="modal-background "></div>
+            <div class="modal-card">
+              <header class="modal-card-head">
+                <p class="modal-card-title"> Add new product </p>
+                <button class="" id="close-btn" >
+                    <i class="ri-close-line"></i>
+                </button>
+              </header> <section class="modal-card-body">                 
+              {% if user.vendor.subscription %}
+              
+              {% if user.vendor.products.all.count < user.vendor.subscription.plan.metadata.products_limite %}
+                {% if user.vendor.subscription_limite_near_reach  %}
+                  <div class="w-full h-20 bg-red-100 rounded-lg p-4 border">
+                    <h1 class="text-lg font-light">
+                      You still have only 1 product to add . upgrade your plan to expand your possobility to add product <a href="{% url 'vendor_plans' %}" class="text-lg font-light text-blue-600 underline underline-offeset-0  " >here</a> 
+                    </h1>
+
+                  </div>
+                {% endif %}
+                <form method="post"  class=" space-y-5 w-full " action="" enctype='multipart/form-data' >
+                
+                  {% csrf_token %}
+                  <!-- {{ form.as_p }} -->
+                      
+                      <div class="field">
+                          <label class="label">Title</label>
+                          <div class="control">
+                            <input class="input" type="text" name="title" maxlength="255" required="" id="id_title">
+                          </div>
+                          <p class="help">This is a help text</p>
+                        </div>
+                      
+                      
+                    
+                  
+                    
+                    <div class="flex  space-x-4">
+                      <div class="field">
+                        <label class="label">Thumbnail</label>
+                        <div class="file has-name">
+                            <label class="file-label">
+                              <input class="file-input" type="file" name="thumb" required="" id="id_thumb">
+                              <span class="file-cta">
+                                <span class="file-icon">
+                                  <i class="fas fa-upload"></i>
+                                </span>
+                                <span class="file-label">
+                                  Choose a file…
+                                </span>
+                              </span>
+                              <span class="file-name">
+                                
+                              </span>
+                            </label>
+                          </div>
+                        
+                        
+                      </div >
+              
+                      <p>
+                        <div class="field">
+                            <label class="label">Price</label>
+                            <div class="control">
+                              <input class="input" type="text" type="number" name="price" value="0" min="0" required="" id="id_price">
+                            </div>
+                            <p class="help">This is a help text</p>
+                          </div>
+                        
+                    
+                      </p>
+                      <div class="field">
+                        <label class="label">Quantity</label>
+                        <div class="control">
+                          <input class="input w-14 " type="text" type="number" name="quantity" value="1" min="0" required="" id="id_quantity">
+                        </div>
+                        <p class="help">This is a help text</p>
+                      </div>
+                    
+                    
+                      
+                      <p>
+                
+                        <div class="field">
+                            <label for="" class="label">Category</label>
+                            <div class="select is-info">
+                                <select name="category" id="category" >
+                                  <option value="" selected="">Select dropdown</option>
+                                  {% for category in menu_categories %}
+                                  <option value="{{ category.id }}" >{{  category.name }}</option>
+                                  {% endfor %}
+                                </select>
+                              </div>
+                        </div>
+                        
+                      </p> 
+                     
+                    </div>
+                    <div class='w-full flex space-x-4' >
+                      <div class="field">
+                        <label for="" class="label"> Sub category</label>
+                        <div class="select is-info">
+                            <select name="sub_category" id='sub_category' >
+                              <option value="" selected="">Select dropdown</option>
+                      
+                              
+                            </select>
+                          </div>
+                    </div>
+                    <div class="sizes field hidden ">
+                      <label for="" class="label">Sizes</label>
+                      <div class="  is-info">
+                        <select name="sizes" id="sizes" class='w-40 outline-sky-500 ' multiple >
+                          {% for size in sizes %}
+                            <option class='' value='{{ size.id }}' > {{ size.name }} </option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                    <div class=" colors field hidden ">
+                      <label for="" class="label">colors</label>
+                      <div class="  is-info">
+                        <select name="colors" id="colors" class='w-40 outline-sky-500 ' multiple >
+                          {% for color in colors %}
+                            <option class=' flex  space-x-4 font-bold text-whit ' style='color:{{ color.code }}'   value='{{ color.id }}' >  <span   >{{ color.name }}</span> </option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                    </div>
+                   <div class="field w-full">
+                    <label for="" class="label font-light">Extra images</label>
+                    <div class="file has-name is-boxed w-full ">
+                      
+                      <label class="file-label w-full">
+                        <input class="file-input" type="file" name="images" multiple>
+                        <span class="file-cta w-full">
+                          <span class="file-icon">
+                            <i class="fas fa-upload"></i>
+                          </span>
+                          <span class="file-label">
+                            Choose a file…
+                          </span>
+                        </span>
+                        
+                      </label>
+                    </div>
+                   </div>
+                    <div class=" field ">
+                      <label class="label">Desc</label>
+                      <textarea class="textarea" placeholder="Desc" cols="40" id="id_desc" name="desc" rows="10" required="" data-processed="0" data-config="{&quot;skin&quot;: &quot;moono-lisa&quot;, &quot;toolbar_Basic&quot;: [[&quot;Source&quot;, &quot;-&quot;, &quot;Bold&quot;, &quot;Italic&quot;]], &quot;toolbar_Full&quot;: [[&quot;Styles&quot;, &quot;Format&quot;, &quot;Bold&quot;, &quot;Italic&quot;, &quot;Underline&quot;, &quot;Strike&quot;, &quot;SpellChecker&quot;, &quot;Undo&quot;, &quot;Redo&quot;], [&quot;Link&quot;, &quot;Unlink&quot;, &quot;Anchor&quot;], [&quot;Image&quot;, &quot;Flash&quot;, &quot;Table&quot;, &quot;HorizontalRule&quot;], [&quot;TextColor&quot;, &quot;BGColor&quot;], [&quot;Smiley&quot;, &quot;SpecialChar&quot;], [&quot;Source&quot;]], &quot;toolbar&quot;: &quot;Full&quot;, &quot;height&quot;: 291, &quot;width&quot;: 835, &quot;filebrowserWindowWidth&quot;: 940, &quot;filebrowserWindowHeight&quot;: 725, &quot;language&quot;: &quot;en-us&quot;}" data-external-plugin-resources="[]" data-id="id_desc" data-type="ckeditortype"></textarea>
+                    </div>
+              
+                
+                <footer class="modal-card-foot">
+                  <button class="button  p-4 bg-sky-600 text-gray-50 font-semibold ">Create Product </button>
+                  <span class="button is-danger close-btn ">Cancel</span>
+                </footer>
+            </form>
+                {% else %}
+                <div class="notifaction is-warning">
+                  You reached the products limite in your plan upgrade your plan to post more products
+
+                </div>
+                {% endif %}
+                {% else %}
+                <div class="notifaction is-warning">
+                  You should be subscribed to a plan to add any product <br>
+                  Please check our <a class='text-blue-600' href ="{% url 'vendor_plans' %}">subscription plans</a>
+
+                </div>
+              {% endif %}
+            </section>
+            </div>
+        </div>
+        <div class="">
+            <h1 style='font-family: "Quicksand", sans-serif !important;' class='text-4xl font-bold mt-3 '>My Products</h1>
+            <a id="addProduct"  class=" addproduct-btn button border border-sky-500 text-sky-500 bg-transparent is-uppercase mt-6">Add product</a>
+            {% if products %}
+            <table class=" w-full  mt-10">
+                <thead>
+                    <tr  class=' w-full grid grid-cols-8 p-3 mb-4  bg-gray-100 rounded-lg'>
+                        <th class='col-span-1' >id</th>
+                        <th class='col-span-2' >Title</th>
+                        <th>Price</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Quantity</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody class='wfull mt-4 space-y-4'>
+                    {% for product in products %}
+                    <tr  class=' product w-full grid grid-cols-8 p-3 border border-gray-200 rounded-lg relative'>
+                      <td class="modal  h-auto overflow-visiible ">
+                        <div class="modal-background "></div>
+                        <div class="modal-card">
+                          <header class="modal-card-head">
+                            <p class="modal-card-title"> Edit  product <span  class="font-light">#{{product.id}}</span> </p>
+                            <button class="" id="close-btn" >
+                                <i class="ri-close-line"></i>
+                            </button>
+                          </header> <section class="modal-card-body">                 
+                        
+                            <form method="post"  class=" space-y-5 w-full " action="{% url 'edit_product' product.id %} " enctype='multipart/form-data' >
+                            
+                              {% csrf_token %}
+                              <!-- {{ form.as_p }} -->
+                                  <input id="product_id" type="hidden" name="id" value={{product.id}}>
+                                  <div class="field">
+                                      <label class="label">Title</label>
+                                      <div class="control">
+                                        <input id="title" class="input"  value="{{product.title}}" type="text" name="title" maxlength="255" required="" id="id_title">
+                                      </div>
+                                      <p class="help">This is a help text</p>
+                                    </div>
+                                  
+                                  
+                                
+                              
+                                
+                                <div class="flex  space-x-4">
+                                  <div class="field">
+                                    <label class="label">Thumbnail</label>
+                                    <div class="file has-name">
+                                        <label class="file-label">
+                                          <input id=thumb class="file-input" value="{% if product.thumb %} {{product.thumb}} {% endif %}" type="file" name="thumb" accept="image/png, image/jpeg" required="" >
+                                          <span class="file-cta">
+                                            <span class="file-icon">
+                                              <i class="fas fa-upload"></i>
+                                            </span>
+                                            <span class="file-label">
+                                              Choose a file…
+                                            </span>
+                                          </span>
+                                          <span class="file-name">
+                                            
+                                          </span>
+                                        </label>
+                                      </div>
+                                    
+                                    
+                                  </div >
+                          
+                                  <p>
+                                    <div class="field">
+                                        <label class="label">Price</label>
+                                        <div class="control">
+                                          <input class="input" id="price" value="{{product.price}}" type="text" type="number" name="price" value="0" min="0" required="" id="id_price">
+                                        </div>
+                                        <p class="help">This is a help text</p>
+                                      </div>
+                                    
+                                
+                                  </p>
+                                  <div class="field">
+                                    <label class="label">Quantity</label>
+                                    <div class="control">
+                                      <input id="quantity" class="input w-14 " value="{{product.quantity}}" type="text" type="number" name="quantity" value="1" min="0" required="" id="id_quantity">
+                                    </div>
+                                    <p class="help">This is a help text</p>
+                                  </div>
+                                
+                                
+                                  
+                                  <p>
+                            
+                                    <div class="field">
+                                        <label for="" class="label">Category</label>
+                                        <div class="select is-info">
+                                            <select name="category"  id="category2" >
+                                              <option value="" selected="">Select dropdown</option>
+                                              {% for category in menu_categories %}
+                                              <option value="{{ category.id }}" {% if category.id == product.category.id %} selected {% endif %} >{{  category.name }}</option>
+                                              {% endfor %}
+                                            </select>
+                                          </div>
+                                    </div>
+                                    
+                                  </p> 
+                                 
+                                </div>
+                                <div class='w-full flex space-x-4' >
+                                  <div class="field">
+                                    <label for="" class="label"> Sub category</label>
+                                    <div class="select is-info">
+                                        <select name="sub_category" value="{{product.Subcategory}}" id='sub_category2' >
+                                          <option value="" selected="">Select dropdown</option>
+                                            {% for sub in product.category.sub_categories.all  %}
+                                            <option value="{{ sub.id }}" {% if sub == product.Subcategory %} selected {% endif %}  >{{ sub.name }}</option>
+                                            {% endfor %}
+                                          
+                                        </select>
+                                      </div>
+                                </div>
+                                
+                                <div class="sizes field  ">
+                                  <label for="" class="label">Sizes</label>
+                                  <div class="  is-info">
+                                    <select name="sizes" id="sizes" value="{{product.sizes.all}}" class='w-40 outline-sky-500 ' multiple >
+                                      {% for size in sizes %}
+                                        <option class='' value='{{ size.id }}' {% if size in product.sizes.all %} selected {% endif %}  > {{ size.name }} </option>
+                                      {% endfor %}
+                                    </select>
+                                  </div>
+                                </div>
+                               
+                                
+                                <div class=" colors field  ">
+                                  <label for="" class="label">colors</label>
+                                  <div class="  is-info">
+                                    <select name="colors" id="colors"  value="{{product.colors}}" class='w-40 outline-sky-500 ' multiple >
+                                      {% for color in colors %}
+                                        <option class=' flex  space-x-4 font-bold text-whit ' style='color:{{ color.code }}'   value='{{ color.id }}' {% if color in product.colors.all %} selected {% endif %} >  <span   >{{ color.name }}</span> </option>
+                                      {% endfor %}
+                                    </select>
+                                  </div>
+                                </div>
+                                
+                                </div>
+                                
+                               <div class="field w-full">
+                                <label for="" class="label font-light">Extra images</label>
+                                <div class="file has-name is-boxed w-full ">
+                                  
+                                  <label class="file-label w-full">
+                                    <input id="extra_images" class="file-input" value="{{product.images}}" type="file" name="images" multiple>
+                                    <span class="file-cta w-full">
+                                      <span class="file-icon">
+                                        <i class="fas fa-upload"></i>
+                                      </span>
+                                      <span class="file-label">
+                                        Choose a file…
+                                      </span>
+                                    </span>
+                                    
+                                  </label>
+                                </div>
+                               </div>
+                                <div class=" field ">
+                                  <label class="label">Desc</label>
+                                  <textarea class="textarea"   placeholder="Desc" cols="40" id="id_desc2" name="desc" rows="10" required="" data-processed="0" data-config="{&quot;skin&quot;: &quot;moono-lisa&quot;, &quot;toolbar_Basic&quot;: [[&quot;Source&quot;, &quot;-&quot;, &quot;Bold&quot;, &quot;Italic&quot;]], &quot;toolbar_Full&quot;: [[&quot;Styles&quot;, &quot;Format&quot;, &quot;Bold&quot;, &quot;Italic&quot;, &quot;Underline&quot;, &quot;Strike&quot;, &quot;SpellChecker&quot;, &quot;Undo&quot;, &quot;Redo&quot;], [&quot;Link&quot;, &quot;Unlink&quot;, &quot;Anchor&quot;], [&quot;Image&quot;, &quot;Flash&quot;, &quot;Table&quot;, &quot;HorizontalRule&quot;], [&quot;TextColor&quot;, &quot;BGColor&quot;], [&quot;Smiley&quot;, &quot;SpecialChar&quot;], [&quot;Source&quot;]], &quot;toolbar&quot;: &quot;Full&quot;, &quot;height&quot;: 291, &quot;width&quot;: 835, &quot;filebrowserWindowWidth&quot;: 940, &quot;filebrowserWindowHeight&quot;: 725, &quot;language&quot;: &quot;en-us&quot;}" data-external-plugin-resources="[]" data-id="id_desc" data-type="ckeditortype">
+                                    {{ product.desc | safe }}
+                                  </textarea>
+                                </div>
+                          
+                            
+                            <footer class="modal-card-foot">
+                              <button id='Update-button' class="button    p-4 bg-sky-600 text-gray-50 font-semibold ">Update Product </button>
+                              <span class="button is-danger close-btn ">Cancel</span>
+                            </footer>
+                        </form>
+                            
+                          
+                        </section>
+                        </div>
+                      </td>
+                        <td>#{{ product.id }}</td>
+                            <td class='col-span-2' ><a href="{% url 'product' product.category.slug  product.Subcategory.slug product.slug %}">{{ product.title }}</a></td>
+                            <td>${{ product.price }}</td>
+                            <td id='product-date'>{{ product.date|date:"D d M Y" }}</td>
+                            <td> {{  product.status | yesno:"Active,Not active" }}  </td>
+                            <td id='product-quantity' class='flex '><span class='ml-4'>{{ product.quantity }}</span></td>
+                            <td id="actions"  class='group   relative' > <i class="ri-settings-5-fill ri-lg cursor-pointer  ml-4"></i>
+                            <div id="actions_div" class="w-20 h-32 space-y-4 bg-gray-50 rounded-lg group-hover:block hidden absolute right-0 -bottom-20">
+                                <button id="lanuchModal"><div  class='   w-full py-1 border-b   ' >Edit</div></button>
+                                <a href="?remove_product={{product.id}}"><div class=' w-full py-1 border-b text-red-600  ' >Remove</div></a>
+                                <a ><div class=' w-full py-1    ' ></div></a>
+
+                            </div>
+                            </td>
+                            
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+        <div class='w-full h-10 mt-60 flex justify-center items-center' >
+            <p class='text-2xl' >You don't have any products yet...</p>
+        </div>
+        {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.ckeditor.com/4.18.0/standard/ckeditor.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.2/moment.min.js" integrity="sha512-Wkxbeuy81yHqZNrMurMURCOCMzkJqaFYnvToublHiOGoVXQ2DS1lOUjKwstbe0GwELrRb9sicdV2y6GiAnVxuw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+  CKEDITOR.replace( 'desc' );
+  CKEDITOR.replace( 'id_desc2' );
+ 
+  let sub_categories = JSON.parse('{{ sub_categories |escapejs }} ')
+  var categoryselect = document.getElementById('category')
+  var sub_categoryselect = document.getElementById('sub_category')
+
+  categoryselect.addEventListener('change',function(){
+    console.log(categoryselect.value)
+    var sub_categories_filtred= sub_categories.filter(sub=>sub.fields.category ==categoryselect.value)
+    console.log(sub_categories_filtred)
+    sub_categoryselect.innerHTML='<option value="" selected="">Select dropdown</option>'
+    sub_categories_filtred.map(sub=>{
+    var sub_category_option = document.createElement('option')
+     sub_category_option.setAttribute('value',sub.pk)
+     fields = sub.fields
+     sub_category_option.innerHTML = sub.fields.name
+     
+     sub_categoryselect.appendChild(sub_category_option)
+     
+    })
+  })
+  console.log(sub_categories)
+  //console.log(sub_categories_filtred)
+
+  var categoryselect2 = document.getElementById('category2')
+  var sub_categoryselect2 = document.getElementById('sub_category2')
+  
+  categoryselect2.addEventListener('change',function(){
+    console.log(categoryselect2.value)
+    var sub_categories_filtred= sub_categories.filter(sub=>sub.fields.category ==categoryselect2.value)
+    console.log(sub_categories_filtred)
+    sub_categoryselect2.innerHTML='<option value="" selected="">Select dropdown</option>'
+    sub_categories_filtred.map(sub=>{
+    var sub_category_option = document.createElement('option')
+     sub_category_option.setAttribute('value',sub.pk)
+     fields = sub.fields
+     sub_category_option.innerHTML = sub.fields.name
+     
+     sub_categoryselect2.appendChild(sub_category_option)
+     
+    })
+  })
+
+</script>
+<script type='module' >
+
+
+    $(document).ready(function () {
+  function getSelectValues(select) {
+      var result = [];
+      var options = select && select.options;
+      var opt;
+
+      for (var i=0, iLen=options.length; i<iLen; i++) {
+        opt = options[i];
+
+        if (opt.selected) {
+            result.push(opt.value || opt.text);
+        }
+      }
+      return result;
+  }
+      
+    //   const Update_button = $('#Update-button')
+    //   Update_button.click((e)=>{
+    //     e.preventDefault()
+    //     const productParams={
+    //       title: $('#title').val(),
+    //       thumb:$('#thumb').val(),
+    //       price: $('#price').val(),
+    //       quantity:$('#quantity'),
+    //       category:$('#category2').val(),
+    //       sub_category: $('#sub_category2').val(),
+    //       sizes: $('#sizes').val(),
+    //       colors:$('#colors').val(),
+    //       extra_images:$('#extra_images').val(),
+    //       desc : $('#id_desc2').val(),
+          
+    //     }
+    //     console.log(productParams)
+    //     fetch(`http://localhost:8000/edit_product/${$('#product_id').val()}`, {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     'X-CSRFToken':'{{csrf_token}}'
+    //   },
+    //   credentials: 'same-origin',
+    //   body: JSON.stringify(productParams),
+    // }).then((response) => {
+    //   return response.json(); 
+    //       }).then((result) => {
+    //   if (result.error) {
+    //     // The card had an error when trying to attach it to a customer
+    //     console.log(result)
+    //     throw result;
+    //   }
+    //   else{
+    //     return window.location.reload()
+    //   }
+      
+    // })
+    //   })
+
+      $('#addProduct').click(function (e) { 
+          e.preventDefault();
+          $('.edit_product').addClass('is-active')
+          
+      });
+      $('#close-btn').click(function (e) { 
+        e.preventDefault();
+        $('.edit_product').removeClass('is-active')
+        
+      });
+    });
+
+    $('.product').each(function (index, element) {
+            
+             element == this
+            $(this).children('#actions').children('#actions_div').children('#lanuchModal').click(()=>{
+              console.log('product')
+                $(this).children('.modal').addClass('is-active')
+                $(this).children('.modal').children('.modal-card').children('.modal-card-head').children('#close-btn').click(()=>{
+                  $(this).children('.modal').removeClass('is-active')
+                })
+                $(this).children('.modal').children('.modal-card').children('.modal-card-body').children('form').children('.modal-card-foot').children('.close-btn').click(()=>{
+                  $(this).children('.modal').removeClass('is-active')
+                })
+               
+            });
+            
+            
+        });
+    $('#category').change(()=>{
+      //console.log()
+      var catval =$('#category').val()
+      if(catval==2){
+        $('.sizes').removeClass('hidden')
+        $('.colors').removeClass('hidden')
+      }else{
+        $('.sizes').addClass('hidden')
+        $('.colors').addClass('hidden')
+      }
+    })
+    
+</script>
+{% endblock scripts %}
+
+
+

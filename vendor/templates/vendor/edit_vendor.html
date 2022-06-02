@@ -1,0 +1,23 @@
+{% extends 'core/base.html' %}
+
+{% block title %} Edit Vendor{% endblock title %}
+
+{% block content %}
+<div class="w-full min-h-screen">
+    <h1 class="text-2xl py-10 ">
+        Edit vendor
+    </h1>
+    <p class="my-5">
+        {{erorr}}
+    </p>
+    <form method="post" action="" class=" space-y-5 " >
+        {% csrf_token %}
+       <!-- {{ form.as_p }} -->
+        
+       <input type="text" class="w-full h-8 border border-gray-800 pl-2" name="name" placeholder="name" value={{vendor.name}} >
+        <input type="email" class="w-full h-8 border border-gray-800 pl-2" name="email" placeholder="email" value={{vendor.created_by.email}}  >
+
+        <button class="p-2 bg-sky-600 text-gray-50 font-semibold m-5 " > Edit Vendor </button>
+    </form>
+</div>
+{% endblock content %}

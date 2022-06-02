@@ -1,0 +1,27 @@
+
+<form action="{% url 'search' %}"  method="get">
+    <div class="w-full h-14 flex items-center justify-between     ">
+        <div id="categories-btn" class=" hidden  group w-32 relative cursor-pointer  rounded-md h-32  border-0 border-sky-600 mx-10 flex justify-center items-center  ">
+            <div class="w-full p-2  space-x-2  lg:flex ">
+                <span class="text-sky-600">Category</span>
+            </div>
+            <div id="categories-menu" class="fixed top-0 left-32 w-80 z-20 min-w-80 group-hover:visible invisible    translate-y-28 group-hover:translate-y-20 transform duration-200 ">
+                {% include 'core/components/categories_menu.html' %}
+            </div>
+        </div>
+       <div class="w-full flex space-x-0">
+        <select class="w-5/12   relative z-10 h-10 bg-sky-00 border-2 border-r-0 border-sky-600  px-2 outline-none   text-sky-600 rounded-l-full  flex justify-center items-center " name="category">
+            <option selected value="">Category</option>
+            {% for category in menu_categories %}
+                <option  value="{{ category.slug }}">{{ category.name }}</option>
+            {% endfor %}
+        </select>
+    <div class="w-10/12 flex -space-x-4 ">
+        <input class="w-full  h-10 pl-4 py-1 relative z-[20]  border-2 border-l-0 rounded-l-none    outline-none border-r-8 rounded-r-full border-sky-600  " placeholder="Search for anything  " type="search" name="query" id="">
+    <button class="lg:w-2/12 w-24 h-10 bg-sky-600 relative z-[10] text-white rounded-r-full  flex justify-center items-center " >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M18.031 16.617l4.283 4.282-1.415 1.415-4.282-4.283A8.96 8.96 0 0 1 11 20c-4.968 0-9-4.032-9-9s4.032-9 9-9 9 4.032 9 9a8.96 8.96 0 0 1-1.969 5.617zm-2.006-.742A6.977 6.977 0 0 0 18 11c0-3.868-3.133-7-7-7-3.868 0-7 3.132-7 7 0 3.867 3.132 7 7 7a6.977 6.977 0 0 0 4.875-1.975l.15-.15z" fill="rgba(255,255,255,1)"/></svg>
+    </button>
+    </div>
+       </div>
+    </div>
+</form>

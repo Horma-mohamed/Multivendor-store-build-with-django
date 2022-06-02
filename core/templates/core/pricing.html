@@ -1,0 +1,27 @@
+{% extends 'core/base.html' %}
+{% block title %} Pricing page {% endblock title %}
+{% block content %}
+<h1 class='text-2xl font-bold text-gray-600 my-5'>
+    Pricing
+</h1>
+<div class='w-full flex my-5' >
+    <section>
+        <p class="title">Pricing Plans</p>
+        <div class="columns  ">
+          {% for product in products %}
+            <div class="column">
+              <p class="subtitle">{{ product.name }}</p>
+              {% for plan in product.plan_set.all %}
+                <div>
+                  <p class="heading">{{ plan.nickname }}</p>
+                  <p>{{ plan.human_readable_price }}</p>
+                </div>
+              {% endfor %}
+            </div>
+          {% endfor %}
+        </div>
+      </section>
+
+</div>
+
+{% endblock content %}

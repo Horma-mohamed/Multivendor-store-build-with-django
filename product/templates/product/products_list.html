@@ -1,0 +1,27 @@
+{% load filters %}
+{% load tags %}
+
+<div id='product' class="  md:w-64 h-56 w-52 sm:w-48 bg-gray-100   mx-0 rounded-md relative px-2 relative ">
+        {% if user in product.favorites.all %}
+            <a id='favorite_btn' href='?favorites_remove_id={{ product.id }}'>
+                <i class="ri-heart-2-fill absolute right-4 top-3 text-red-400 ri-2x"></i>
+            </a>
+        {% else %}
+        <a id='favorite_btn' href='?favorites_id={{ product.id }}'>
+            <i class="ri-heart-2-line absolute right-4 top-3 text-gray-400 ri-2x"></i>
+        </a>
+        {% endif %}
+        <a  class='absolute right-4 bottom-3 z-10' href='?product_id={{product.id}}'>
+            <i id='add_to_cart_btn' class="ri-add-circle-line ri-2x text-sky-600 "></i>
+        </a>
+        <div class='w-full h-20 flex justify-center mt-10 '>
+            <img class=' w-4/5  ' src={{ product.thumb.url}} alt="not found">
+        </div>
+         <div class="w-full p-2 absolute bottom-0 ">
+            <a href="{% url 'product' product.category.slug product.Subcategory.slug product.slug %}" ><h1 id='title' class="  text-lg font-semibold my-2">{{ product.title | truncatechars:10 }}</h1></a>
+            <div class='w-full flex justify-between mt-2 items-center '>
+            <p class=" text-gray-800 text-md font-bold" id='price'>${{ product.price }}</p>
+            
+            </div>
+        </div>
+</div>

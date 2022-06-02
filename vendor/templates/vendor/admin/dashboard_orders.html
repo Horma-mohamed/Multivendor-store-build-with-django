@@ -1,0 +1,252 @@
+{% extends 'core/admin/dashboard.html' %}
+
+{% block title %}Vendor Orders | {{ user }} {% endblock %}
+
+
+{% block content %}
+    <div class="px-4">
+    
+        <div class="">
+            <div class="flex lg:block space-x-4 lg:space-x-0">
+                <h1 style='font-family: "Quicksand", sans-serif !important;' class=' text-2xl lg:text-4xl font-bold mt-3 '>My orders</h1>
+                <h1 class='my-4'> {{ orders | length }} orders Found </h1>
+            </div>
+            {% if True %}
+            <ul class='  status-menu  bg-gray- flex space-x-6 mt-10  relative transform duration-500 lg:mt-5 '    > 
+                <a href="{% url 'vendor_orders' %}">
+                    <li style='font-family: "Quicksand", sans-serif !important;' class=' status-li cursor-pointer  text-gray-800 font-semibold  text-md lg:text-lg font-bold relative before:absolute before:opacity-100 {% if status == "" %} before:opacity-100 font-bold text-gray-800 {% else %}before:opacity-0 {% endif %}    before:w-full before:h-1 before:rounded-full before:bg-sky-600 before:-bottom-2'>
+                    
+                        All orders
+                    
+                    </li>
+                </a>
+                <a href="{% url 'vendor_orders' %}?status=dispatch">
+                    <li style='font-family: "Quicksand", sans-serif !important;' class=' status-li cursor-pointer text-md lg:text-lg text-gray-500  font-semibold relative before:absolute     before:w-full before:h-1 before:rounded-full before:bg-sky-600 before:-bottom-2 {% if status == "dispatch" %} before:opacity-100 font-bold text-gray-800 {% else %}before:opacity-0 {% endif %} '>
+                    
+                        Dispatch 
+                    
+                    </li>
+                </a>
+
+                <a href="{% url 'vendor_orders' %}?status=pending">
+                    <li style='font-family: "Quicksand", sans-serif !important;' class=' status-li cursor-pointer text-md lg:text-lg text-gray-500  font-semibold relative before:absolute     before:w-full before:h-1 before:rounded-full before:bg-sky-600 before:-bottom-2 {% if status == "pending" %} before:opacity-100 font-bold text-gray-800 {% else %}before:opacity-0 {% endif %} '>
+                    
+                        Pending
+                    
+                    </li>
+                </a>
+                <a href="{% url 'vendor_orders' %}?status=delivered">
+                    <li style='font-family: "Quicksand", sans-serif !important;' class='   status-li cursor-pointer text-md lg:text-lg text-gray-500  font-semibold relative before:absolute     before:w-full before:h-1 before:rounded-full before:bg-sky-600 before:-bottom-2 {% if status == "delivered" %} before:opacity-100 font-bold text-gray-800 {% else %}before:opacity-0 {% endif %} '>
+                    
+                        Completed
+                   
+                    </li> 
+                </a>
+
+            </ul>
+            <table class=" w-full  mt-10">
+                
+                <thead>
+                    <tr  class=' w-full grid lg:grid-cols-9 grid-cols-6 p-3 mb-4   bg-gray-100 rounded-lg'>
+                        <th class='col-span-1 flex items-center text-md lg:text-lg ' >id</th>
+                        <th class='col-span-2 text-md lg:text-lg' >Name</th>
+                        <th class="text-md lg:text-lg  " >Address</th>
+                        <th class="text-md lg:text-lg hidden lg:block " >Date</th>
+                        <th class="text-md lg:text-lg" >Cost</th>
+                        <th class="text-md lg:text-lg  hidden lg:block" >Status</th>
+                        <th class="text-md lg:text-lg" >Paid</th>
+                        <th class="text-md lg:text-lg hidden lg:block" >Actions</th>
+                    </tr>
+                </thead>
+                <tbody class='space-y-4' >
+                    
+                    {% for order in orders %}
+                    <tr  class=' order w-full grid lg:grid-cols-9 grid-cols-6 p-3 border border-gray-200 rounded-lg relative overflow-auto '>
+                        <td class="modal modal-{{order.id}} h-auto overflow-auto">
+                            <div class="modal-background"></div>
+                            <div class="modal-card overflow-auto">
+                              <header class="modal-card-head">
+                                <p class="modal-card-title">#{{order.id }} Order </p>
+                                <button class="" id="close-btn" >
+                                    <i class="ri-close-line"></i>
+                                </button>
+                              </header>
+                              <form  action="" method="post">
+                                  {% csrf_token %}
+                                <section class="modal-card-body">
+                                    <div class=" w-full mb-2 p-4">
+                                        <div class="w-full flex justify-between">
+                                            <div class="flex space-x-4 items-center">
+                                                <div class="w-10 h-10 rounded-full bg-gray-300"></div>
+                                                <h1 style='font-family: "Quicksand", sans-serif !important;' class=" font-bold text-xl  text-gray-600  " > {{order.user}} </h1>
+                                            </div>
+                                            <input type="hidden" name="order_id"  value='{{order.id}}' > 
+                                            <select class="w-24 " name="status" id="">
+                                                <option selected value="Pending"> Pending </option>
+                                                <option  value="Dispatch"> Dispatch </option>
+                                                <option  value="Delivered" class=" text-green-400" > Delivered </option>
+    
+                                            </select>
+                                        </div>
+                                        <div class=" w-full">
+                                           
+                                               <ul class="  grid grid-cols-2 my-5 p-4 gap-y-4 ">
+                                                <div class=" flex space-x-4 ">
+                                                    <li>
+                                                       <b> Name:</b> {{ order.first_name }} {{ order.last_name }}
+                                                    </li>
+                                                    
+                                                </div>
+                                                <li><b>Address:</b> {{ order.address }}</li>
+                                                <li><b>Zip and place:</b> {{ order.zipcode }} {{ order.place }}</li>
+                                                <li><b>E-mail:</b> {{ order.email }}</li>
+                                                <li><b>Phone:</b> {{ order.phone }}</li>
+                                               </ul>
+                        
+                                                <div class=" w-full ">
+                                                    <div class="w-full" >
+                                                        <ul  class=' w-full grid grid-cols-5 p-3 mb-4    bg-gray-100 rounded-lg'>
+                                                            <li>Title</li>
+                                                            <li>Price</li>
+                                                            <li>Quantity</li>
+                                                            <li>Paid</li>
+                                                            <li>Total</li>
+                                                        </ul>
+                                                    </div>
+                        
+                                                    <div class="w-full">
+                                                        {% for item in order.items.all %}
+                                                            {% if item.vendor == request.user.vendor %}
+                                                                <ul   class=' w-full grid grid-cols-5 p-3 mb-4 border {% if item.vendor_paid  %}border-green-500 {% else %} border-red-500{% endif %}  rounded-lg' >
+                                                                    <li>{{ item.product.title |truncatewords:25 }}</li>
+                                                                    <li>${{ item.product.price }}</li>
+                                                                    <li>{{ item.quantity }}</li>
+                                                                    <li>{{ item.vendor_paid|yesno:"Yes,No" }}</li>
+                                                                    <li>${{ item.get_total_price }}</li>
+                                                                </ul>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                            </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                   
+                                  </section>
+                                  <footer class="modal-card-foot">
+                                    <button class="button is-success">Save changes</button>
+                                    <span class="button is-danger close-btn ">Cancel</span>
+                                  </footer>
+                              </form>
+                            </div>
+                        </td>
+                        <td>#{{ order.id }}</td>
+                            <td class='col-span-2 flex items-center ' >  <button class="js-modal-trigger" data-target="modal-js-example" id="lanuchModal"> {{ order.first_name }} {{ order.last_name }} </button></td>
+                            <td class="" > {{ order.address }} </td>
+                            <td id='product-date' class=" hidden lg:block">{{ order.created_at |date:"D d M Y" }}</td>
+                            <td class='flex '><span class='ml-4'>${{ order.get_cost }}</span></td>
+                            <td class=" hidden lg:block"> {{ order.status }} </td>
+                            <td class='{% if order.fully_paid %}text-green-400{% else %}text-red-600{% endif %}'>{% if order.fully_paid %}paid{% else %}Not paid{% endif %}</td>
+                            <td class=' hidden lg:block' ><a href=""><ion-icon name="settings-outline" class='text-xl ml-4' >  </ion-icon></a></td>
+                        </tr>
+                    {%endfor%}
+                    {% else %}
+                    <div class='w-full h-10 mt-60 flex justify-center items-center' >
+                        <h1 class='text-2xl ' > There is not any order yet... </h1>
+                    </div>
+                    
+                </tbody>
+        </table>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+
+{%   block scripts %}
+    <script type="module">
+
+        $(document).ready(function () {
+           
+            // element == this
+            $('.status-li').click(function(){
+                $('.status-li').addClass(' before:opacity-0 ')
+                $('.status-li').removeClass(' before:opacity-100  font-bold text-gray-800 ')
+                $(this).removeClass(' before:opacity-0 ')
+                $(this).addClass(' before:opacity-100  font-bold text-gray-800 ')
+            })
+        
+           
+        $('.order').each(function (index, element) {
+            console.log('order')
+             element == this
+            $(this).children('td').children('#lanuchModal').click(()=>{
+                $(this).children('.modal').addClass('is-active')
+               
+            });
+            
+            
+        });
+        $('.modal').each(function (index, element) {
+            // element == this
+            $(this).children('.modal-card').children('header').children('button').click(()=>{
+                $(this).removeClass('is-active')
+                
+            })
+
+            $(this).children('.modal-card').children('form').children('footer').children('.close-btn').click(()=>{
+                $(this).removeClass('is-active')
+                
+            })
+            
+        });
+        
+           });
+    </script>
+{% endblock %}
+
+
+{% comment %} {% if orders %}
+                {% for order in orders %}
+                    <div class=" mt-10 {% if order.fully_paid %}has-background-success-light{% else %}has-background-info-light{% endif %} mb-2 p-4">
+                        <div class="columns is-multiline">
+                            <div class="column is-6">
+                                <h3 class="is-size-4">#{{ order.id }} - {{ order.first_name }} {{ order.last_name }}</h3>
+                            </div>
+        
+                            <div class="column is-12">
+                                <b>Name:</b> {{ order.first_name }} {{ order.last_name }}<br>
+                                <b>Address:</b> {{ order.address }}<br>
+                                <b>Zip and place:</b> {{ order.zipcode }} {{ order.place }}<br>
+                                <b>E-mail:</b> {{ order.email }}<br>
+                                <b>Phone:</b> {{ order.phone }}
+        
+                                <table class="table is-fullwidth mt-4">
+                                    <thead>
+                                        <tr>
+                                            <th>Title</th>
+                                            <th>Price</th>
+                                            <th>Quantity</th>
+                                            <th>Paid</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+        
+                                    <tbody>
+                                        {% for item in order.items.all %}
+                                            {% if item.vendor == request.user.vendor %}
+                                                <tr>
+                                                    <td>{{ item.product.title }}</td>
+                                                    <td>${{ item.product.price }}</td>
+                                                    <td>{{ item.quantity }}</td>
+                                                    <td>{{ item.vendor_paid|yesno:"Yes,No" }}</td>
+                                                    <td>${{ item.get_total_price }}</td>
+                                                </tr>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %} {% endcomment %}
